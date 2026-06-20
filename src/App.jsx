@@ -11,7 +11,6 @@ import { useEffect, useRef, useState } from 'react'
 function App() {
 
     //storing values
-
     const theContext = useRef(null)
 
 

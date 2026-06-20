@@ -5,7 +5,6 @@
     background-color: #a6a6a6;
     z-index: 15;
     position: absolute;
-    top: 20px;
     left: 15px;
 
     border: 1px solid #707070;
@@ -19,4 +18,18 @@
     font-size: medium;
     word-wrap: break-word;
     padding: 5px;
+}
+
+
+.colorbox {
+    display: flex;
+    flex-direction:row;
+    height: 20px;
+    width: 100%;
+    gap: 10px;
+}
+
+.colorbox button{
+    width: 20%;
+    
 }

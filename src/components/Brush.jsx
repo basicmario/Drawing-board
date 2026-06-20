@@ -6,9 +6,8 @@ function Brush({context}) {
     
 
   return (
-    <div className="Brush">
-        
-    </div>
+    <>
+    </>
   )
 }
 

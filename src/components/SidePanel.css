@@ -10,7 +10,7 @@
     border: 1px solid #707070;
     border-radius: 15px;
     height: 350px;
-    width: 150px;
+    width: 180px;
     text-align: center;
 
     font-family: Arial, Helvetica, sans-serif;
@@ -24,12 +24,52 @@
 .colorbox {
     display: flex;
     flex-direction:row;
-    height: 20px;
+    height: 25px;
     width: 100%;
-    gap: 10px;
+    gap: 7px;
 }
 
 .colorbox button{
     width: 20%;
-    
+    border: 0px solid rgb(80, 80, 80);
+    border-radius: 10px;
+}
+
+.colorbox button:hover {
+    cursor: pointer;
+}
+
+
+
+.backgroundcolor {
+    display: flex;
+    flex-direction:row;
+    height: 25px;
+    width: 100%;
+    gap: 7px;
+}
+
+.backgroundcolor button{
+    width: 20%;
+    border: 0px solid rgb(80, 80, 80);
+    border-radius: 10px;
+}
+
+.backgroundcolor button:hover {
+    cursor: pointer;
+}
+
+
+.strokewidth input {
+    border: 0px solid grey;
+    border-radius: 15px;
+    padding-left: 10px;
+    height: 30px;
+    text-align: center;
+
+}
+
+.strokewidth input:focus {
+    outline: none;
+    background-color: aliceblue;
 }

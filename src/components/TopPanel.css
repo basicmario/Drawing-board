@@ -1,0 +1,39 @@
+
+
+
+.TopPanel {
+    display: flex;
+    position: absolute;
+    z-index: 15px;
+
+    background-color: #a6a6a6;
+
+    top: 10px;
+
+    width: 500px;
+    height: 40px;
+
+
+    border-radius: 15px;
+    padding: 5px;
+    gap: 5px;
+}
+
+.TopPanel button {
+    height: 100%;
+    width: 40px;
+    border-radius: 15px;
+    font-size: large;
+    border: 0px solid ;
+    background-color: transparent;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.TopPanel button:hover {
+    background-color: #797979;
+    cursor: pointer;
+}

@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import './board.css'
 
 
-function Board({width, height, theref, context}) {
+function Board({width, height, theref, context, brushcolor, lineWidth}) {
 
     
     console.log(` the width: ${width}, ${height}, and the ref`)
@@ -11,51 +11,56 @@ function Board({width, height, theref, context}) {
 
     const draw = useRef(false)
 
+    //functions
+
+    const MouseDown = () => {
+        draw.current = true
+    }
+
+    const MouseUp = () => {
+        draw.current = false
+    }
+
+
 
     //checking to see if the player is drawing
     useEffect(()=>{
 
-        function handleMouseMove(event) {
+        const handleMouseMove = (event) =>{
+
             if (!context.current) return
+
+            if (draw.current == false) return
             context.current.beginPath()
-            context.current.arc(event.clientX, event.clientY, 5, 0, 2 * Math.PI)
-            context.current.fillStyle = "#ffffff"
+            context.current.arc(event.clientX, event.clientY, lineWidth, 0, 2 * Math.PI)
+            context.current.fillStyle = brushcolor
             context.current.fill()
-            context.current.lineWidth = 5
+            context.current.lineWidth = lineWidth
+            
         }
 
-        document.addEventListener("mousedown", ()=>{
-            // document.addEventListener("mousemove", handleMouseMove)
-            console.log("down")
-            draw.current = true
-        })
+        document.addEventListener("mousedown", MouseDown)
 
-        document.addEventListener("mouseup", ()=>{
-            //document.removeEventListener("mouseup", handleMouseMove)
-            console.log("up")
+        document.addEventListener("mouseup", MouseUp)
 
-            draw.current = false
-        })
-
-        document.addEventListener("mousemove", (event)=>{
-            //console.log("moving")
-
-            if(draw.current == true){
-                handleMouseMove(event)
-            }
-        })
+        document.addEventListener("mousemove", handleMouseMove)
 
         return () => {
             document.removeEventListener("mousemove", handleMouseMove)
+            document.removeEventListener("mousedown", MouseDown)
+            document.removeEventListener("mouseup", MouseUp)
         }
 
-    }, [])
-    
+    }, [brushcolor, lineWidth])
 
+
+    
+    /*
     console.log(` the old : ${context.fillStyle}`)
     if (context.current){
         console.log(` the new: ${context.current.fillStyle}`)
     }
+    */
 
 
     return (

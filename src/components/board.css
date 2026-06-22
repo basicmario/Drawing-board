@@ -10,3 +10,12 @@
   display: block;
   overflow: hidden;
 }
+
+.TopBoard {
+  display: block;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  
+
+}

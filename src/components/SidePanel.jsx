@@ -23,6 +23,7 @@ function SidePanel({boardColorChanger, brushColorChanger, lineWidthChanger}) {
           <button className='Yellow' style={{background: 'yellow'}} onClick={()=>brushColorChanger("#ded30d")}></button>
           <button className='Purple' style={{background: 'purple'}} onClick={()=>brushColorChanger("#b40dde")}></button>
           <button className='White' style={{background: 'white'}} onClick={()=>brushColorChanger("#ffffff")}></button>
+          <button className='White' style={{background: 'black'}} onClick={()=>brushColorChanger("#000000")}></button>
         </div>
 
         <p>Background Color</p>
@@ -33,6 +34,7 @@ function SidePanel({boardColorChanger, brushColorChanger, lineWidthChanger}) {
           <button className='Yellow' style={{background: 'yellow'}} onClick={()=>boardColorChanger("#ded30d")}></button>
           <button className='Purple' style={{background: 'purple'}} onClick={()=>boardColorChanger("#b40dde")}></button>
           <button className='White' style={{background: 'white'}} onClick={()=>boardColorChanger("#ffffff")}></button>
+          <button className='White' style={{background: 'black'}} onClick={()=>boardColorChanger("#000000")}></button>
         </div>
 
 

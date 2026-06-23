@@ -1,5 +1,5 @@
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import './board.css'
 
 
@@ -9,8 +9,31 @@ function Board({width, height, theref, context, brushcolor, lineWidth, theselect
     //storing variables
     const pointsHolder = []
     const draw = useRef(false)
+    const [keyInputsHolder, setKeyInputsHolder] = useState("")
+    const textholder = useRef("")
     const startingPosition = useRef({startingX : 0, startingY : 0})
     const squareDownInitialHolder = useRef({x: null, y :null})
+
+
+
+    //function
+    
+
+    const keyDown = (event) => {
+        if(event.code != "Enter") {
+            console.log(` the key : ${event.key}`)
+            setKeyInputsHolder(prev => prev + (event.key))
+            textholder.current = textholder.current + event.key
+        }
+
+        if(event.code == "Enter"){
+            console.log(` printing text: ${keyInputsHolder}, ${textholder.current}`)
+            
+            context.current.strokeText(textholder.current,event.clientX, event.clientY)
+            textholder.current = ""
+            document.removeEventListener("keydown", keyDown)
+        }
+    }
 
 
     //functions
@@ -26,7 +49,10 @@ function Board({width, height, theref, context, brushcolor, lineWidth, theselect
             console.log("Square stuff here")
             squareDownInitialHolder.current.x = event.clientX
             squareDownInitialHolder.current.y = event.clientY
-            
+        }else if(theselector == "Text"){
+            console.log("drawing text")
+        
+            document.addEventListener("keydown", keyDown)
             
         }
     }

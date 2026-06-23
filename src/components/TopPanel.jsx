@@ -8,6 +8,8 @@ import { FaRegSquareFull } from "react-icons/fa6";
 import { FiTriangle } from "react-icons/fi";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import { FaPaintBrush } from "react-icons/fa";
+import { IoText } from "react-icons/io5";
+
 
 
 
@@ -26,6 +28,8 @@ function TopPanel({itemSelector}) {
         <button> <FiTriangle /> </button>
         <button> <FaLongArrowAltRight /> </button>
         <button onClick={()=>itemSelector("Brush")}><FaPaintBrush /> </button>
+        <button onClick={()=>itemSelector("Text")}> <IoText /> </button>
+
 
     </div>
   )

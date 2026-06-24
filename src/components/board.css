@@ -6,9 +6,23 @@
     margin: 0;
 }
 
+
+.convaswrapper {
+  position: relative;
+}
+
 .Board {
   display: block;
   overflow: hidden;
+  position: absolute;
+  top: 0;
+}
+
+.secondBoard {
+  display: block;
+  position: absolute;
+  z-index: 5;
+
 }
 
 .TopBoard {

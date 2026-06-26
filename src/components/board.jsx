@@ -21,6 +21,8 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
     const theContext2 = useRef(null)
     const mousePos = useRef({x: null, y: null})
 
+    const alreadyInText = useRef(false)
+
 
     //function get the canvas element once its mounted
     useEffect(()=>{
@@ -58,22 +60,34 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
 
     const keyDown = (event) => {
+        theContext2.current.font = `${theTextSize}px Arial`; 
+        theContext2.current.fillStyle =  brushcolor;
+
         if(event.code != "Enter") {
-            console.log(` the key : ${event.key}`)
+            
+            theContext2.current.clearRect(0,0, width, height)
+
             setKeyInputsHolder(prev => prev + (event.key))
+            
             textholder.current = textholder.current + event.key
+            console.log("text:" ,textholder.current)
+            theContext2.current.fillText(textholder.current, mousePos.current.x, mousePos.current.y)
         }
 
         if(event.code == "Enter"){
-            console.log(` printing text: ${keyInputsHolder}, ${textholder.current}`)
+            theContext2.current.clearRect(0,0, width, height)
             theContext.current.fillStyle =  brushcolor;
-            //theContext.current.lineWidth = 10; 
             theContext.current.font = `${theTextSize}px Arial`;  
             theContext.current.fillText(textholder.current, mousePos.current.x, mousePos.current.y)
             textholder.current = ""
+            alreadyInText.current = false
             document.removeEventListener("keydown", keyDown)
         }
+
+        
     }
+
+    
 
 
     //functions
@@ -92,9 +106,14 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
             squareDownInitialHolder.current.y = event.clientY
         }else if(theselector == "Text"){
             
+            
             mousePos.current = {x: event.clientX, y: event.clientY}
-        
-            document.addEventListener("keydown", keyDown)
+            
+            if(alreadyInText.current == false){
+                document.addEventListener("keydown", keyDown)
+            }
+            
+            alreadyInText.current = true
             
         }
     }
@@ -140,13 +159,11 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
     //checking to see if the player is drawing
     useEffect(()=>{
         const handleMouseMove = (event) =>{
+
             if (!theContext.current) return
             if (draw.current == false) return
 
             if(theselector == "Brush"){
-
-
-                
                 theContext2.current.lineCap = "round"
                 theContext2.current.moveTo(startingPosition.current.startingX, startingPosition.current.startingY)
                 const prev = {x: startingPosition.current.startingX, y: startingPosition.current.startingY}

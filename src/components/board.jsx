@@ -7,7 +7,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
 
     //storing variables
-    const pointsHolder = []
+    const pointsHolder = useRef([])
     const draw = useRef(false)
     const draw2 = useRef(false)
     const theref = useRef(null)
@@ -80,15 +80,18 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
     const MouseDown = (event) => {
         draw.current = true
         if(theselector == "Brush"){
-            console.log("Use Brush stuff here")
+            
             theContext.current.beginPath()
+
+            theContext2.current.beginPath()
             startingPosition.current = {startingX : event.clientX, startingY : event.clientY}
+            pointsHolder.current.push({x: event.clientX, y: event.clientY})
         }else if(theselector == "Square"){
-            console.log("Square stuff here")
+            
             squareDownInitialHolder.current.x = event.clientX
             squareDownInitialHolder.current.y = event.clientY
         }else if(theselector == "Text"){
-            console.log("drawing text")
+            
             mousePos.current = {x: event.clientX, y: event.clientY}
         
             document.addEventListener("keydown", keyDown)
@@ -100,8 +103,32 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
         draw.current = false
 
         if(theselector == "Brush"){
-            console.log("yes")
-        }else if(theselector == "Square"){
+            
+            theContext.current.beginPath()
+            let startingPoints = pointsHolder.current[0]
+            theContext.current.lineCap = "round"
+            theContext2.current.clearRect(0,0, width, height)
+            theContext.current.moveTo(startingPoints.x, startingPoints.y)
+
+            for (let x = 1; x < pointsHolder.current.length; x++){
+
+                const prev = {x: startingPoints.x, y: startingPoints.y}
+                const midX = (prev.x + pointsHolder.current[x].x) / 2
+                const midY = (prev.y + pointsHolder.current[x].y) / 2
+
+
+                theContext.current.quadraticCurveTo(prev.x, prev.y, midX, midY)
+                theContext.current.strokeStyle = brushcolor
+                theContext.current.lineWidth = lineWidth
+                
+                startingPoints = {x : midX, y : midY}
+            }  
+
+            theContext.current.stroke()
+            pointsHolder.current.length = 0
+        }
+
+        if(theselector == "Square"){
             theContext.current.fillStyle =  brushcolor;
             theContext.current.fillRect(squareDownInitialHolder.current.x, squareDownInitialHolder.current.y, (event.clientX - squareDownInitialHolder.current.x), (event.clientY - squareDownInitialHolder.current.y))
         }
@@ -115,21 +142,26 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
         const handleMouseMove = (event) =>{
             if (!theContext.current) return
             if (draw.current == false) return
+
             if(theselector == "Brush"){
-                theContext.current.lineCap = "round"
-                theContext.current.moveTo(startingPosition.current.startingX, startingPosition.current.startingY)
+
+
+                
+                theContext2.current.lineCap = "round"
+                theContext2.current.moveTo(startingPosition.current.startingX, startingPosition.current.startingY)
                 const prev = {x: startingPosition.current.startingX, y: startingPosition.current.startingY}
                 const midX = (prev.x + event.clientX) / 2
                 const midY = (prev.y + event.clientY) / 2
 
-                theContext.current.quadraticCurveTo(prev.x, prev.y, midX, midY)
-                theContext.current.strokeStyle = brushcolor
-                theContext.current.lineWidth = lineWidth
-                theContext.current.stroke()
+                theContext2.current.quadraticCurveTo(prev.x, prev.y, midX, midY)
+                theContext2.current.strokeStyle = brushcolor
+                theContext2.current.lineWidth = lineWidth
+                theContext2.current.stroke()
                 startingPosition.current = {startingX : midX, startingY : midY}
+                
 
+                pointsHolder.current.push({x : event.clientX, y: event.clientY})
 
-                pointsHolder.push({x : event.clientX, y: event.clientY})
             }else if(theselector == "Square"){
                 
 

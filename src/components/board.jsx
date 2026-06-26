@@ -112,7 +112,6 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
     
     //checking to see if the player is drawing
     useEffect(()=>{
-
         const handleMouseMove = (event) =>{
             if (!theContext.current) return
             if (draw.current == false) return
@@ -132,17 +131,21 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
                 pointsHolder.push({x : event.clientX, y: event.clientY})
             }else if(theselector == "Square"){
-                //context.current.clearRect(0, 0, width, height)
-                theContext.current.strokeStyle = brushcolor
-                theContext.current.strokeRect(squareDownInitialHolder.current.x, squareDownInitialHolder.current.y, (event.clientX - squareDownInitialHolder.current.x) , (event.clientY - squareDownInitialHolder.current.y) )
+                
+
+                theContext2.current.clearRect(0,0, width, height)
+                theContext2.current.strokeStyle = brushcolor
+                theContext2.current.strokeRect(squareDownInitialHolder.current.x, squareDownInitialHolder.current.y, (event.clientX - squareDownInitialHolder.current.x) , (event.clientY - squareDownInitialHolder.current.y) )
             }
         }
 
+       
         document.addEventListener("mousedown", MouseDown)
         document.addEventListener("mouseup", MouseUp)
         document.addEventListener("mousemove", handleMouseMove)
 
         return () => {
+           
             document.removeEventListener("mousemove", handleMouseMove)
             document.removeEventListener("mousedown", MouseDown)
             document.removeEventListener("mouseup", MouseUp)

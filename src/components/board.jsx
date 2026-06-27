@@ -1,5 +1,6 @@
 
 import { useRef, useEffect, useState } from 'react';
+import { IoHandLeftOutline } from "react-icons/io5";
 import './board.css'
 
 
@@ -22,6 +23,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
     const mousePos = useRef({x: null, y: null})
 
     const alreadyInText = useRef(false)
+    const panSelected = useRef(false)
 
 
     //function get the canvas element once its mounted
@@ -96,25 +98,41 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
         if(theselector == "Brush"){
             
             theContext.current.beginPath()
-
             theContext2.current.beginPath()
             startingPosition.current = {startingX : event.clientX, startingY : event.clientY}
             pointsHolder.current.push({x: event.clientX, y: event.clientY})
+            //console.log("running 1")
         }else if(theselector == "Square"){
             
             squareDownInitialHolder.current.x = event.clientX
             squareDownInitialHolder.current.y = event.clientY
         }else if(theselector == "Text"){
             
-            
-            mousePos.current = {x: event.clientX, y: event.clientY}
-            
+            console.log("alreadyInText", alreadyInText.current)
+
             if(alreadyInText.current == false){
+                mousePos.current = {x: event.clientX, y: event.clientY}
                 document.addEventListener("keydown", keyDown)
+                alreadyInText.current = true
+            }else {
+
+                theContext2.current.clearRect(0,0, width, height)
+                theContext.current.fillStyle =  brushcolor;
+                theContext.current.font = `${theTextSize}px Arial`;  
+                theContext.current.fillText(textholder.current, mousePos.current.x, mousePos.current.y)
+                textholder.current = ""
+                alreadyInText.current = false
+                document.removeEventListener("keydown", keyDown)
+
+                console.log("texted rendered to bottom")
             }
             
-            alreadyInText.current = true
             
+            
+        }else if(theselector == "Pan"){
+            
+            document.body.style.cursor = 'url("/NewPanOpenSmall.png"), auto';
+
         }
     }
 
@@ -145,25 +163,40 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
             theContext.current.stroke()
             pointsHolder.current.length = 0
+           // console.log("running 2")
         }
 
         if(theselector == "Square"){
             theContext.current.fillStyle =  brushcolor;
             theContext.current.fillRect(squareDownInitialHolder.current.x, squareDownInitialHolder.current.y, (event.clientX - squareDownInitialHolder.current.x), (event.clientY - squareDownInitialHolder.current.y))
+        }else if(theselector == "Pan"){
+            document.body.style.cursor = ""
+            panSelected.current = false
         }
     }
+
+    
 
 
     
     
     //checking to see if the player is drawing
     useEffect(()=>{
+        
+        if(theselector == "Pan"){
+            panSelected.current = true
+        }else{
+            panSelected.current = false
+        }
+
+
         const handleMouseMove = (event) =>{
 
             if (!theContext.current) return
-            if (draw.current == false) return
+            if (draw.current == false || panSelected.current == true) return
 
             if(theselector == "Brush"){
+                //console.log("running")
                 theContext2.current.lineCap = "round"
                 theContext2.current.moveTo(startingPosition.current.startingX, startingPosition.current.startingY)
                 const prev = {x: startingPosition.current.startingX, y: startingPosition.current.startingY}
@@ -176,18 +209,18 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 theContext2.current.stroke()
                 startingPosition.current = {startingX : midX, startingY : midY}
                 
-
                 pointsHolder.current.push({x : event.clientX, y: event.clientY})
 
             }else if(theselector == "Square"){
                 
-
                 theContext2.current.clearRect(0,0, width, height)
                 theContext2.current.strokeStyle = brushcolor
                 theContext2.current.strokeRect(squareDownInitialHolder.current.x, squareDownInitialHolder.current.y, (event.clientX - squareDownInitialHolder.current.x) , (event.clientY - squareDownInitialHolder.current.y) )
+            }else if(theselector == "Pan"){
+                //console.log("Running")
+                document.body.style.cursor = 'url("/NewPanOpenSmall.png"), auto';
             }
         }
-
        
         document.addEventListener("mousedown", MouseDown)
         document.addEventListener("mouseup", MouseUp)

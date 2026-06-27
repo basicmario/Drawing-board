@@ -1,6 +1,6 @@
 
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './TopPanel.css'
 
 import { PiHandPalmBold } from "react-icons/pi";
@@ -24,16 +24,46 @@ function TopPanel({itemSelector}) {
     const panelWidth = 500
 
 
+    const [theOption, setTheOption]  = useState("Brush")
+
+    function onButtonClick(Pick){
+
+      itemSelector(Pick)
+      setTheOption(Pick)
+    }
+
+    
+
+    useEffect(()=>{
+
+      let thebutton = document.getElementById(theOption)
+
+      thebutton.style.backgroundColor = "#bfbfbf"
+
+      let otherbuttons = document.getElementsByClassName("topPanelButton")
+
+      for( let x = 0; x < otherbuttons.length; x++){
+        
+        if(otherbuttons[x].id != theOption){
+          otherbuttons[x].style.backgroundColor = "#a6a6a6"
+        }
+
+      }
+
+    },[theOption])
+
+
+
   return (
     <div className="TopPanel" style={{top : '5' , left : ((windowSize.width / 2) - (panelWidth/ 2))}}>
 
-        <button onClick={()=>itemSelector("Selection")}> <LuMousePointer2 /></button>
-        <button onClick={()=>itemSelector("Pan")}> <PiHandPalmBold /> </button>
-        <button onClick={()=>itemSelector("Square")}> <FaRegSquareFull /> </button>
-        <button onClick={()=>itemSelector("Triangle")}> <FiTriangle /> </button>
-        <button onClick={()=>itemSelector("Arrows")}> <FaLongArrowAltRight /> </button>
-        <button onClick={()=>itemSelector("Brush")}> <PiPaintBrush /> </button>
-        <button onClick={()=>itemSelector("Text")}> <IoText /> </button>
+        <button className= "topPanelButton" id="Selection" onClick={()=>onButtonClick("Selection")}> <LuMousePointer2 /></button>
+        <button className= "topPanelButton" id="Pan" onClick={()=>onButtonClick("Pan")}> <PiHandPalmBold /> </button>
+        <button className= "topPanelButton" id="Square" onClick={()=>onButtonClick("Square")}> <FaRegSquareFull /> </button>
+        <button className= "topPanelButton" id="Triangle" onClick={()=>onButtonClick("Triangle")}> <FiTriangle /> </button>
+        <button className= "topPanelButton" id="Arrows" onClick={()=>onButtonClick("Arrows")}> <FaLongArrowAltRight /> </button>
+        <button className= "topPanelButton" id="Brush" onClick={()=>onButtonClick("Brush")}> <PiPaintBrush /> </button>
+        <button className= "topPanelButton" id="Text" onClick={()=>onButtonClick("Text")}> <IoText /> </button>
         
 
     </div>

@@ -14,6 +14,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
     const theref = useRef(null)
     const theref2 = useRef(null)
     const [keyInputsHolder, setKeyInputsHolder] = useState("")
+
     const textholder = useRef("")
     const startingPosition = useRef({startingX : 0, startingY : 0})
     const squareDownInitialHolder = useRef({x: null, y :null})
@@ -21,6 +22,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
     const theContext = useRef(null)
     const theContext2 = useRef(null)
     const mousePos = useRef({x: null, y: null})
+
 
     const alreadyInText = useRef(false)
     const panSelected = useRef(false)
@@ -114,6 +116,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 mousePos.current = {x: event.clientX, y: event.clientY}
                 document.addEventListener("keydown", keyDown)
                 alreadyInText.current = true
+
             }else {
 
                 theContext2.current.clearRect(0,0, width, height)
@@ -122,17 +125,20 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 theContext.current.fillText(textholder.current, mousePos.current.x, mousePos.current.y)
                 textholder.current = ""
                 alreadyInText.current = false
+
                 document.removeEventListener("keydown", keyDown)
 
                 console.log("texted rendered to bottom")
             }
-            
-            
-            
         }else if(theselector == "Pan"){
             
             document.body.style.cursor = 'url("/NewPanOpenSmall.png"), auto';
 
+        }else if(theselector == "Arrows"){
+
+            console.log("Arrow selected")
+
+            mousePos.current = {x: event.clientX, y: event.clientY}
         }
     }
 
@@ -170,8 +176,27 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
             theContext.current.fillStyle =  brushcolor;
             theContext.current.fillRect(squareDownInitialHolder.current.x, squareDownInitialHolder.current.y, (event.clientX - squareDownInitialHolder.current.x), (event.clientY - squareDownInitialHolder.current.y))
         }else if(theselector == "Pan"){
+
             document.body.style.cursor = ""
             panSelected.current = false
+
+        }else if(theselector == "Arrows"){
+
+            
+
+            theContext2.current.clearRect(0,0, width, height)
+
+            theContext.current.beginPath()
+            theContext.current.strokeStyle = brushcolor
+            theContext.current.lineWidth = lineWidth
+            theContext.current.moveTo(mousePos.current.x, mousePos.current.y)
+            theContext.current.lineTo(event.clientX, event.clientY)
+            theContext.current.stroke()
+
+            console.log("done with line")
+            mousePos.current.x = null
+            mousePos.current.y = null
+
         }
     }
 
@@ -219,6 +244,16 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
             }else if(theselector == "Pan"){
                 //console.log("Running")
                 document.body.style.cursor = 'url("/NewPanOpenSmall.png"), auto';
+            }else if(theselector == "Arrows"){
+
+                console.log("drawing")
+                theContext2.current.clearRect(0,0, width, height)
+                theContext2.current.beginPath()
+                theContext2.current.strokeStyle = brushcolor
+                theContext2.current.lineWidth = lineWidth
+                theContext2.current.moveTo(mousePos.current.x, mousePos.current.y)
+                theContext2.current.lineTo(event.clientX, event.clientY)
+                theContext2.current.stroke()
             }
         }
        

@@ -7,11 +7,14 @@ import { PiHandPalmBold } from "react-icons/pi";
 import { FaRegSquareFull } from "react-icons/fa6";
 import { FiTriangle } from "react-icons/fi";
 import { FaLongArrowAltRight } from "react-icons/fa";
-import { FaPaintBrush } from "react-icons/fa";
+import { LuPaintbrush } from "react-icons/lu";
+
 import { IoText } from "react-icons/io5";
 import { LuMousePointer2 } from "react-icons/lu";
 import { PiPaintBrush } from "react-icons/pi";
+import { LuTypeOutline } from "react-icons/lu";
 
+import { LuSpline } from "react-icons/lu";
 
 
 
@@ -60,10 +63,10 @@ function TopPanel({itemSelector}) {
         <button className= "topPanelButton" id="Selection" onClick={()=>onButtonClick("Selection")}> <LuMousePointer2 /></button>
         <button className= "topPanelButton" id="Pan" onClick={()=>onButtonClick("Pan")}> <PiHandPalmBold /> </button>
         <button className= "topPanelButton" id="Square" onClick={()=>onButtonClick("Square")}> <FaRegSquareFull /> </button>
-        <button className= "topPanelButton" id="Triangle" onClick={()=>onButtonClick("Triangle")}> <FiTriangle /> </button>
-        <button className= "topPanelButton" id="Arrows" onClick={()=>onButtonClick("Arrows")}> <FaLongArrowAltRight /> </button>
-        <button className= "topPanelButton" id="Brush" onClick={()=>onButtonClick("Brush")}> <PiPaintBrush /> </button>
-        <button className= "topPanelButton" id="Text" onClick={()=>onButtonClick("Text")}> <IoText /> </button>
+        <button className= "topPanelButton" id="Triangle" onClick={()=>onButtonClick("Triangle")} style={{fontSize : "22px"}}> <FiTriangle /> </button>
+        <button className= "topPanelButton" id="Arrows" onClick={()=>onButtonClick("Arrows")}  style={{fontSize : "22px"}}> <LuSpline /> </button>
+        <button className= "topPanelButton" id="Brush" onClick={()=>onButtonClick("Brush")}> <LuPaintbrush /> </button>
+        <button className= "topPanelButton" id="Text" onClick={()=>onButtonClick("Text")}> <LuTypeOutline /> </button>
         
 
     </div>

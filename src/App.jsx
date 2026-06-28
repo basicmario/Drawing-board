@@ -6,6 +6,7 @@ import './App.css'
 
 import { useEffect, useRef, useState } from 'react'
 import TopPanel from './components/TopPanel'
+import BottomStats from './components/BottomStats'
 
 
 
@@ -51,6 +52,7 @@ function App() {
         <Brush context={theContext} brushcolor={brushColor}/>
         <SidePanel boardColorChanger = {setBoardColor} brushColorChanger={setBrushColor} lineWidthChanger={setStrokeSize} theTextSize={settextSize}/>
         <TopPanel itemSelector={setSelectedItem}/>
+        <BottomStats/>
       </div>
     </>
   )

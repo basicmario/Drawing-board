@@ -179,8 +179,8 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 //console.log("running 1")
             }else if(theselector == "Square"){
                 
-                squareDownInitialHolder.current.x = event.clientX - translateValues.current.x; // ← subtract offset
-                squareDownInitialHolder.current.y = event.clientY - translateValues.current.y;
+                squareDownInitialHolder.current.x = event.clientX //+ translateValues.current.x// ← subtract offset
+                squareDownInitialHolder.current.y = event.clientY //+ translateValues.current.y
 
             }else if(theselector == "Text"){
                 
@@ -254,7 +254,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
                 theContext2.current.clearRect(0,0, width, height)
                 theContext.current.fillStyle =  brushcolor;
-                theContext.current.fillRect(squareDownInitialHolder.current.x, squareDownInitialHolder.current.y, (event.clientX - squareDownInitialHolder.current.x), (event.clientY - squareDownInitialHolder.current.y))
+                theContext.current.fillRect(squareDownInitialHolder.current.x - translateValues.current.x, squareDownInitialHolder.current.y - translateValues.current.y, (event.clientX - squareDownInitialHolder.current.x), (event.clientY - squareDownInitialHolder.current.y))
 
                 const newSquare = new SquareData(
                     lineWidth, 

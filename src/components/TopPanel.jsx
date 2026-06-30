@@ -19,12 +19,16 @@ import { LuSpline } from "react-icons/lu";
 
 
 
+//additionally i will be handling the scale of the board through this component
+
 
 
 function TopPanel({itemSelector}) {
 
     const windowSize = {width : window.innerWidth, height: window.innerHeight}
     const panelWidth = 500
+
+
 
 
     const [theOption, setTheOption]  = useState("Brush")
@@ -55,6 +59,10 @@ function TopPanel({itemSelector}) {
 
     },[theOption])
 
+
+
+   
+    
 
 
   return (

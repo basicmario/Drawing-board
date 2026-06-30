@@ -87,6 +87,10 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
     const historyHolder = useRef([])
     const translateValues = useRef({x: 0, y: 0})
+
+    const zoomValue = useRef(100)
+    const mousePosforZooming = useRef({x: null, y: null})
+    const previousmousecoordinates = useRef({x: null, y: null})
     
 
 
@@ -207,8 +211,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
             }else if(theselector == "Pan"){
                 
                 document.body.style.cursor = 'url("/NewPanOpenSmall.png"), auto';
-                
-                console.log("pan mouse down")
+           
                 panMousePos.current = {x: event.clientX, y: event.clientY}
 
             }else if(theselector == "Arrows"){
@@ -251,20 +254,34 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
             if(theselector == "Square"){
 
+                let worldStartX = (squareDownInitialHolder.current.x - translateValues.current.x) / (zoomValue.current / 100)
 
+                let worldStartY = (squareDownInitialHolder.current.y - translateValues.current.y) / (zoomValue.current / 100)
+
+                let worldCurrentX = (event.clientX - translateValues.current.x) / (zoomValue.current / 100)
+
+                let worldCurrentY = (event.clientY - translateValues.current.y) / (zoomValue.current / 100)
                 theContext2.current.clearRect(0,0, width, height)
                 theContext.current.fillStyle =  brushcolor;
-                theContext.current.fillRect(squareDownInitialHolder.current.x - translateValues.current.x, squareDownInitialHolder.current.y - translateValues.current.y, (event.clientX - squareDownInitialHolder.current.x), (event.clientY - squareDownInitialHolder.current.y))
+                theContext.current.fillRect((squareDownInitialHolder.current.x - translateValues.current.x) / (zoomValue.current / 100), 
+                                            (squareDownInitialHolder.current.y - translateValues.current.y) / (zoomValue.current / 100), 
+                                            (event.clientX - squareDownInitialHolder.current.x) / (zoomValue.current / 100), 
+                                            (event.clientY - squareDownInitialHolder.current.y) / (zoomValue.current / 100))
 
+
+                
                 const newSquare = new SquareData(
                     lineWidth, 
                     brushcolor, 
-                    (event.clientY - squareDownInitialHolder.current.y),
-                    (event.clientX - squareDownInitialHolder.current.x), 
+                    (event.clientY - squareDownInitialHolder.current.y) / (zoomValue.current / 100),
+                    (event.clientX - squareDownInitialHolder.current.x) / (zoomValue.current / 100), 
                     {
-                        x: squareDownInitialHolder.current.x - translateValues.current.x, // ← subtract offset
-                        y: squareDownInitialHolder.current.y - translateValues.current.y
+                        x: (squareDownInitialHolder.current.x - translateValues.current.x) / (zoomValue.current / 100),
+                        y: (squareDownInitialHolder.current.y - translateValues.current.y) / (zoomValue.current / 100)
                     })
+
+                    //let worldX = (event.clientX - translateValues.current.x) / (oldZoomValue / 100)
+                    //let worldY = (event.clientY - translateValues.current.y) / (oldZoomValue / 100)
 
                 historyHolder.current.push(newSquare)
 
@@ -276,7 +293,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 document.body.style.cursor = ""
                 panSelected.current = false
 
-                console.log("pan mouse up")
+               
                 panMousePos.current = {x: null, y: null}
 
             }else if(theselector == "Arrows"){
@@ -292,7 +309,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 theContext.current.lineTo(event.clientX, event.clientY)
                 theContext.current.stroke()
 
-                console.log("done with line")
+               
                 mousePos.current.x = null
                 mousePos.current.y = null
 
@@ -305,6 +322,8 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
             if (!theContext.current) return
             if (draw.current == false ) return
+
+            
 
             if(theselector == "Brush"){
                 //console.log("running")
@@ -329,14 +348,11 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 theContext2.current.strokeRect(squareDownInitialHolder.current.x, squareDownInitialHolder.current.y, (event.clientX - squareDownInitialHolder.current.x) , (event.clientY - squareDownInitialHolder.current.y) )
             }else if(theselector == "Pan"){
 
-                console.log("pan mouse moving")
-
-
                 const dx = event.clientX - panMousePos.current.x
                 const dy = event.clientY - panMousePos.current.y
 
-                translateValues.current.x += dx
-                translateValues.current.y += dy
+                translateValues.current.x += dx 
+                translateValues.current.y += dy 
 
                 panMousePos.current.x  = event.clientX
                 panMousePos.current.y = event.clientY
@@ -345,7 +361,10 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 theContext.current.fillStyle = theboardColor
                 theContext.current.fillRect(0, 0, width, height)
 
-                theContext.current.setTransform(1, 0, 0, 1, translateValues.current.x, translateValues.current.y)
+                theContext.current.setTransform(1, 0, 0, 1, 0, 0)
+
+                theContext.current.translate(translateValues.current.x, translateValues.current.y)
+                theContext.current.scale(zoomValue.current / 100, zoomValue.current / 100)
 
                 for (let x = 0; x < historyHolder.current.length; x++) {
                     switch (historyHolder.current[x]?.type) {
@@ -374,16 +393,72 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 theContext2.current.stroke()
             }
         }
+
+
+
+        function zooming(event){
+            console.log(`Y scroll: ${event.deltaY}`)
+
+            mousePosforZooming.current.x = event.clientX
+            mousePosforZooming.current.y = event.clientY
+
+            let oldZoomValue = zoomValue.current
+            
+            if(event.deltaY == 100 && zoomValue.current > 1){
+                zoomValue.current = zoomValue.current - 1
+            }else if(event.deltaY == -100 && zoomValue.current < 200){
+                zoomValue.current = zoomValue.current + 1
+            }
+
+
+            let worldX = (event.clientX - translateValues.current.x) / (oldZoomValue / 100)
+            let worldY = (event.clientY - translateValues.current.y) / (oldZoomValue / 100)
+
+            let newTranslateX = event.clientX - (worldX * (zoomValue.current / 100))
+            let newTranslateY = event.clientY - (worldY * (zoomValue.current / 100))
+
+            theContext.current.clearRect(0, 0, width, height)
+            theContext.current.fillStyle = theboardColor
+            theContext.current.fillRect(0, 0, width, height)
+            theContext.current.setTransform(1, 0, 0, 1, 0, 0)
+
+
+            translateValues.current.x = newTranslateX
+            translateValues.current.y = newTranslateY
+
+            theContext.current.translate(translateValues.current.x, translateValues.current.y)
+            theContext.current.scale(zoomValue.current / 100, zoomValue.current / 100)
+
+
+            for (let x = 0; x < historyHolder.current.length; x++) {
+                
+                switch (historyHolder.current[x]?.type) {
+                    case "square":
+                        theContext.current.fillStyle = historyHolder.current[x].BrushColor;
+                        theContext.current.fillRect(
+                            historyHolder.current[x].startingPoint.x,
+                            historyHolder.current[x].startingPoint.y,
+                            historyHolder.current[x].width,
+                            historyHolder.current[x].height
+                        );
+                        break;
+                }
+            }
+        }
+        
+    
        
         document.addEventListener("mousedown", MouseDown)
         document.addEventListener("mouseup", MouseUp)
         document.addEventListener("mousemove", handleMouseMove)
+        document.addEventListener("wheel", zooming)
 
         return () => {
            
             document.removeEventListener("mousemove", handleMouseMove)
             document.removeEventListener("mousedown", MouseDown)
             document.removeEventListener("mouseup", MouseUp)
+            document.removeEventListener("wheel", zooming)
         }
     }, [brushcolor, lineWidth, theselector, theTextSize])
 

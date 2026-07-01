@@ -38,10 +38,12 @@ class TriangleData{
 
 
 class ArrowData{
-    constructor(lineSize, BrushColor, endPoint){
+    constructor(lineSize, BrushColor, endPoint, startingPointforLine){
+        this.type = "arrow"
         this.lineSize = lineSize
         this.BrushColor = BrushColor
         this.endPoint = endPoint
+        this.startingPoint = startingPointforLine
         
     }
 }
@@ -261,7 +263,9 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 let worldCurrentX = (event.clientX - translateValues.current.x) / (zoomValue.current / 100)
 
                 let worldCurrentY = (event.clientY - translateValues.current.y) / (zoomValue.current / 100)
+
                 theContext2.current.clearRect(0,0, width, height)
+
                 theContext.current.fillStyle =  brushcolor;
                 theContext.current.fillRect((squareDownInitialHolder.current.x - translateValues.current.x) / (zoomValue.current / 100), 
                                             (squareDownInitialHolder.current.y - translateValues.current.y) / (zoomValue.current / 100), 
@@ -273,15 +277,12 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 const newSquare = new SquareData(
                     lineWidth, 
                     brushcolor, 
-                    (event.clientY - squareDownInitialHolder.current.y) / (zoomValue.current / 100),
-                    (event.clientX - squareDownInitialHolder.current.x) / (zoomValue.current / 100), 
+                    (event.clientY - squareDownInitialHolder.current.y) / (zoomValue.current / 100), // height
+                    (event.clientX - squareDownInitialHolder.current.x) / (zoomValue.current / 100), //width
                     {
-                        x: (squareDownInitialHolder.current.x - translateValues.current.x) / (zoomValue.current / 100),
-                        y: (squareDownInitialHolder.current.y - translateValues.current.y) / (zoomValue.current / 100)
+                        x: (squareDownInitialHolder.current.x - translateValues.current.x) / (zoomValue.current / 100), // starting point x
+                        y: (squareDownInitialHolder.current.y - translateValues.current.y) / (zoomValue.current / 100) // starting point y
                     })
-
-                    //let worldX = (event.clientX - translateValues.current.x) / (oldZoomValue / 100)
-                    //let worldY = (event.clientY - translateValues.current.y) / (oldZoomValue / 100)
 
                 historyHolder.current.push(newSquare)
 
@@ -305,15 +306,31 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 theContext.current.beginPath()
                 theContext.current.strokeStyle = brushcolor
                 theContext.current.lineWidth = lineWidth
-                theContext.current.moveTo(mousePos.current.x, mousePos.current.y)
-                theContext.current.lineTo(event.clientX, event.clientY)
+                theContext.current.moveTo(
+                    (mousePos.current.x - translateValues.current.x) / (zoomValue.current / 100),
+                    (mousePos.current.y - translateValues.current.y) / (zoomValue.current / 100))
+                theContext.current.lineTo(
+                (event.clientX - translateValues.current.x) / (zoomValue.current / 100),
+                ( event.clientY - translateValues.current.y) / (zoomValue.current / 100))
                 theContext.current.stroke()
 
+                const beginningPoint = { 
+                    x: (mousePos.current.x - translateValues.current.x) / (zoomValue.current / 100)
+                    , y: (mousePos.current.y - translateValues.current.y) / (zoomValue.current / 100)}
                
                 mousePos.current.x = null
                 mousePos.current.y = null
 
+                const endpoint = {
+                    x: (event.clientX - translateValues.current.x) / (zoomValue.current / 100), 
+                    y: (event.clientY - translateValues.current.y) / (zoomValue.current / 100)}
+                
+                console.log("beginning point: ", beginningPoint.x , beginningPoint.y)
+                const newArrow = new ArrowData(lineWidth, brushcolor, endpoint, beginningPoint)
+
+                historyHolder.current.push(newArrow)
             }
+    
         }
 
 
@@ -348,6 +365,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 theContext2.current.strokeRect(squareDownInitialHolder.current.x, squareDownInitialHolder.current.y, (event.clientX - squareDownInitialHolder.current.x) , (event.clientY - squareDownInitialHolder.current.y) )
             }else if(theselector == "Pan"){
 
+
                 const dx = event.clientX - panMousePos.current.x
                 const dy = event.clientY - panMousePos.current.y
 
@@ -377,13 +395,26 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                                 historyHolder.current[x].height
                             );
                             break;
-                    }
+
+                        case "arrow":
+                            console.log("drawing the arrow")
+                            theContext.current.beginPath()
+                            theContext.current.strokeStyle = historyHolder.current[x].BrushColor
+                            theContext.current.lineWidth = historyHolder.current[x].lineSize
+                            theContext.current.moveTo(historyHolder.current[x].startingPoint.x, historyHolder.current[x].startingPoint.y)
+
+                            console.log("the point in the pan: ", historyHolder.current[x].startingPoint.x, historyHolder.current[x].startingPoint.y)
+                            theContext.current.lineTo(historyHolder.current[x].endPoint.x, historyHolder.current[x].endPoint.y)
+                            theContext.current.stroke()
+                            console.log("arrow done drawn")
+                            break;
+                    }   
                 }
            
 
             }else if(theselector == "Arrows"){
 
-                console.log("drawing")
+                
                 theContext2.current.clearRect(0,0, width, height)
                 theContext2.current.beginPath()
                 theContext2.current.strokeStyle = brushcolor
@@ -397,7 +428,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
 
         function zooming(event){
-            console.log(`Y scroll: ${event.deltaY}`)
+           
 
             mousePosforZooming.current.x = event.clientX
             mousePosforZooming.current.y = event.clientY
@@ -441,6 +472,16 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                             historyHolder.current[x].width,
                             historyHolder.current[x].height
                         );
+                        break
+
+                    case "arrow" :
+                    
+                        theContext.current.beginPath()
+                        theContext.current.strokeStyle = historyHolder.current[x].BrushColor
+                        theContext.current.lineWidth = historyHolder.current[x].lineSize
+                        theContext.current.moveTo(historyHolder.current[x].startingPoint.x, historyHolder.current[x].startingPoint.y)
+                        theContext.current.lineTo(historyHolder.current[x].endPoint.x, historyHolder.current[x].endPoint.y)
+                        theContext.current.stroke()
                         break;
                 }
             }

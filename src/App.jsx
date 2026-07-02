@@ -20,6 +20,7 @@ function App() {
     const [textSize, settextSize] = useState(2)
     const [selectedItem, setSelectedItem] = useState("Brush")
     const [canvaSize, setCanvasSize] = useState({width: window.innerWidth, height: window.innerHeight})
+    const [zoomValue, setzoomValue] = useState(100)
 
     //console.log(`the color: ${boardColor}`)
     //console.log(`the stroke size: ${strokeSize}`)
@@ -31,6 +32,12 @@ function App() {
     window.addEventListener("resize", (event) => {
         setCanvasSize({width: window.innerWidth, height: window.innerHeight})
      })
+
+
+
+     function setZoomValue(value){
+      setzoomValue(value)
+     }
     
     
 
@@ -48,11 +55,12 @@ function App() {
         <Board width={canvaSize.width } height={canvaSize.height} theboardColor={boardColor} context={theContext} brushcolor={brushColor} 
         lineWidth={strokeSize} 
         theselector={selectedItem} 
-        theTextSize={textSize}/>
+        theTextSize={textSize}
+        updateZoomValue={setZoomValue}/>
         <Brush context={theContext} brushcolor={brushColor}/>
         <SidePanel boardColorChanger = {setBoardColor} brushColorChanger={setBrushColor} lineWidthChanger={setStrokeSize} theTextSize={settextSize}/>
         <TopPanel itemSelector={setSelectedItem}/>
-        <BottomStats/>
+        <BottomStats theZoomValue= {zoomValue}/>
       </div>
     </>
   )

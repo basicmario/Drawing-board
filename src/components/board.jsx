@@ -67,7 +67,7 @@ class TextData{
 
 
 
-function Board({width, height, brushcolor, lineWidth, theselector, theboardColor, theTextSize}) {
+function Board({width, height, brushcolor, lineWidth, theselector, theboardColor, theTextSize, updateZoomValue}) {
 
 
     //storing variables
@@ -567,8 +567,10 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
             
             if(event.deltaY == 100 && zoomValue.current > 1){
                 zoomValue.current = zoomValue.current - 1
+                updateZoomValue(zoomValue.current)
             }else if(event.deltaY == -100 && zoomValue.current < 200){
                 zoomValue.current = zoomValue.current + 1
+                updateZoomValue(zoomValue.current)
             }
 
 

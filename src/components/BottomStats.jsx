@@ -1,9 +1,11 @@
 
 import { BsCursorFill } from "react-icons/bs";
 import React, { useEffect, useRef, useState } from 'react'
+import { TiZoomIn } from "react-icons/ti";
+
 import './BottomStats.css'
 
-function BottomStats() {
+function BottomStats({theZoomValue}) {
 
   const [mouseCoordinates, setmouseCoordinates] = useState({x: null, y: null})
 
@@ -23,7 +25,7 @@ function BottomStats() {
   return (
     <>
         <div className="bottomboard">
-            <p> <BsCursorFill /> x : {mouseCoordinates.x} y : {mouseCoordinates.y}</p>
+            <p> <TiZoomIn /> {theZoomValue}% <BsCursorFill /> x : {mouseCoordinates.x} y : {mouseCoordinates.y}</p>
         </div>
         
     

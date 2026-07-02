@@ -4,7 +4,7 @@
 .bottomboard {
 
     z-index: 15;
-    width: 150px;
+    width: 200px;
     height: 30px;
     background-color: #a6a6a6;
     position: fixed;
@@ -24,3 +24,5 @@
 
 
 }
+
+

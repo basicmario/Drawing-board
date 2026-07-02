@@ -28,11 +28,16 @@ class SquareData{
 
 
 class TriangleData{
-    constructor(lineSize, BrushColor, height, width){
+    constructor(lineSize, BrushColor, height, width, moveToPoint, firstLinePoint, secondLinePoint, thirdLinePoint){
         this.lineSize = lineSize
+        this.type = "Triangle"
         this.BrushColor = BrushColor
+        this.movetopoint = moveToPoint
         this.height = height
         this.width = width
+        this.firstlinepoint = firstLinePoint
+        this.secondlinepoint = secondLinePoint
+        this.thirdlinepoint = thirdLinePoint
     }
 }
 
@@ -364,6 +369,55 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 const newArrow = new ArrowData(lineWidth, brushcolor, endpoint, beginningPoint)
 
                 historyHolder.current.push(newArrow)
+            }else if(theselector == "Triangle"){
+
+
+                theContext2.current.clearRect(0,0, width, height)
+                theContext.current.lineWidth = lineWidth
+                theContext.current.strokeStyle = brushcolor
+
+                const triangleWidth = event.clientX - triangleStartPos.current.x 
+                const triangleHeight = event.clientY - triangleStartPos.current.y
+
+                theContext.current.beginPath();
+                
+                //top middle line to bottom right point
+                theContext.current.moveTo(((event.clientX - triangleWidth) - translateValues.current.x) / (zoomValue.current / 100), 
+                                            ((event.clientY) - translateValues.current.y) / (zoomValue.current / 100)) // starting point of the triangle the left point
+                
+                
+                theContext.current.lineTo(((triangleStartPos.current.x + (triangleWidth / 2))  - translateValues.current.x) / (zoomValue.current / 100), 
+                                            (triangleStartPos.current.y - translateValues.current.y) / (zoomValue.current / 100)) //draws a line from the start point to the top point
+
+               
+                theContext.current.lineTo((event.clientX - translateValues.current.x) / (zoomValue.current / 100), 
+                                            (event.clientY - translateValues.current.y) / (zoomValue.current / 100)) // then from the top most point to where the mouse is, which would be the right most point
+                
+                
+                theContext.current.lineTo(((event.clientX - triangleWidth) - translateValues.current.x) / (zoomValue.current / 100), 
+                                            (event.clientY - translateValues.current.y) / (zoomValue.current / 100)) // from the right most point to the start point
+
+
+                theContext.current.stroke()
+
+                const themovetopoint = {x: (((event.clientX - triangleWidth) - translateValues.current.x) / (zoomValue.current / 100)), 
+                                        y: ((event.clientY) - translateValues.current.y) / (zoomValue.current / 100)}
+
+                const firstpoint = {x: ((triangleStartPos.current.x + (triangleWidth / 2))  - translateValues.current.x) / (zoomValue.current / 100), 
+                                    y: (triangleStartPos.current.y - translateValues.current.y) / (zoomValue.current / 100)}
+
+                const secondpoint = {x: (event.clientX - translateValues.current.x) / (zoomValue.current / 100), 
+                                    y: (event.clientY - translateValues.current.y) / (zoomValue.current / 100)}
+
+                const thirdpoint = {x: ((event.clientX - triangleWidth) - translateValues.current.x) / (zoomValue.current / 100), 
+                                    y: (event.clientY - translateValues.current.y) / (zoomValue.current / 100)}
+
+
+                const newTringle = new TriangleData(lineWidth, brushcolor, triangleHeight, triangleWidth, themovetopoint, firstpoint, secondpoint, thirdpoint)
+
+                historyHolder.current.push(newTringle)
+
+                
             }
     
         }
@@ -432,21 +486,40 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                             break;
 
                         case "arrow":
-                            console.log("drawing the arrow")
                             theContext.current.beginPath()
                             theContext.current.strokeStyle = historyHolder.current[x].BrushColor
                             theContext.current.lineWidth = historyHolder.current[x].lineSize
                             theContext.current.moveTo(historyHolder.current[x].startingPoint.x, historyHolder.current[x].startingPoint.y)
 
-                            console.log("the point in the pan: ", historyHolder.current[x].startingPoint.x, historyHolder.current[x].startingPoint.y)
                             theContext.current.lineTo(historyHolder.current[x].endPoint.x, historyHolder.current[x].endPoint.y)
                             theContext.current.stroke()
-                            console.log("arrow done drawn")
+                            
                             break;
+
+                        case "Triangle" : {
+
+
+                            theContext.current.lineWidth = historyHolder.current[x].lineSize
+                            theContext.current.strokeStyle = historyHolder.current[x].BrushColor
+
+                            let triangleWidth = event.clientX - triangleStartPos.current.x 
+                            let triangleHeight = event.clientY - triangleStartPos.current.y
+
+                            theContext.current.beginPath();
+                            
+                            //top middle line to bottom right point
+                            theContext.current.moveTo(historyHolder.current[x].movetopoint.x, historyHolder.current[x].movetopoint.y) // starting point of the triangle the left point
+                            theContext.current.lineTo(historyHolder.current[x].firstlinepoint.x, historyHolder.current[x].firstlinepoint.y) //draws a line from the start point to the top point
+
+                        
+                            theContext.current.lineTo(historyHolder.current[x].secondlinepoint.x, historyHolder.current[x].secondlinepoint.y) // then from the top most point to where the mouse is, which would be the right most point
+                            theContext.current.lineTo(historyHolder.current[x].thirdlinepoint.x, historyHolder.current[x].thirdlinepoint.y) // from the right most point to the start point
+                            theContext.current.stroke()
+                            
+                            break
+                        }
                     }   
                 }
-           
-
             }else if(theselector == "Arrows"){
 
                 
@@ -473,16 +546,12 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 
                 //top middle line to bottom right point
                 theContext2.current.moveTo(event.clientX - triangleWidth, (event.clientY))
-                 theContext2.current.strokeStyle = "red"
                 theContext2.current.lineTo(triangleStartPos.current.x + (triangleWidth / 2), triangleStartPos.current.y)
 
-                 theContext2.current.strokeStyle = "blue"
+               
                 theContext2.current.lineTo(event.clientX, event.clientY)
                 theContext2.current.lineTo(event.clientX - triangleWidth, event.clientY)
                 theContext2.current.stroke()
-
-
-
             }
         }
 
@@ -544,6 +613,27 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                         theContext.current.lineTo(historyHolder.current[x].endPoint.x, historyHolder.current[x].endPoint.y)
                         theContext.current.stroke()
                         break;
+                    case "Triangle" : {
+
+                        theContext.current.lineWidth = historyHolder.current[x].lineSize
+                        theContext.current.strokeStyle = historyHolder.current[x].BrushColor
+
+                        let triangleWidth = event.clientX - triangleStartPos.current.x 
+                        let triangleHeight = event.clientY - triangleStartPos.current.y
+
+                        theContext.current.beginPath();
+                        
+                        //top middle line to bottom right point
+                        theContext.current.moveTo(historyHolder.current[x].movetopoint.x, historyHolder.current[x].movetopoint.y) // starting point of the triangle the left point
+                        theContext.current.lineTo(historyHolder.current[x].firstlinepoint.x, historyHolder.current[x].firstlinepoint.y) //draws a line from the start point to the top point
+
+                    
+                        theContext.current.lineTo(historyHolder.current[x].secondlinepoint.x, historyHolder.current[x].secondlinepoint.y) // then from the top most point to where the mouse is, which would be the right most point
+                        theContext.current.lineTo(historyHolder.current[x].thirdlinepoint.x, historyHolder.current[x].thirdlinepoint.y) // from the right most point to the start point
+                        theContext.current.stroke()
+                        
+                        break
+                    }
                 }
             }
         }

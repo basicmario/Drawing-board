@@ -93,6 +93,8 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
     const zoomValue = useRef(100)
     const mousePosforZooming = useRef({x: null, y: null})
     const previousmousecoordinates = useRef({x: null, y: null})
+
+    const triangleStartPos = useRef({x: null, y: null})
     
 
 
@@ -126,6 +128,34 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
         theContext2.current.fillStyle = theboardColor;
         theContext2.current.fillRect(0, 0, (width), (height));
 
+
+        for (let x = 0; x < historyHolder.current.length; x++) {
+            switch (historyHolder.current[x]?.type) {
+                case "square":
+                    console.log("new square")
+                    theContext.current.fillStyle = historyHolder.current[x].BrushColor;
+                    theContext.current.fillRect(
+                        historyHolder.current[x].startingPoint.x,
+                        historyHolder.current[x].startingPoint.y,
+                        historyHolder.current[x].width,
+                        historyHolder.current[x].height
+                    );
+                    break;
+
+                case "arrow":
+                    console.log("drawing the arrow")
+                    theContext.current.beginPath()
+                    theContext.current.strokeStyle = historyHolder.current[x].BrushColor
+                    theContext.current.lineWidth = historyHolder.current[x].lineSize
+                    theContext.current.moveTo(historyHolder.current[x].startingPoint.x, historyHolder.current[x].startingPoint.y)
+
+                    console.log("the point in the pan: ", historyHolder.current[x].startingPoint.x, historyHolder.current[x].startingPoint.y)
+                    theContext.current.lineTo(historyHolder.current[x].endPoint.x, historyHolder.current[x].endPoint.y)
+                    theContext.current.stroke()
+                    console.log("arrow done drawn")
+                    break;
+            }   
+        }
         //to do: when the window is resized it deletes all the text that was there
     },[theboardColor, width, height])
     
@@ -221,6 +251,11 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 console.log("Arrow selected")
 
                 mousePos.current = {x: event.clientX, y: event.clientY}
+            }else if(theselector == "Triangle"){
+
+                console.log("triangle running now")
+                triangleStartPos.current.x = event.clientX
+                triangleStartPos.current.y = event.clientY
             }
         }
 
@@ -422,6 +457,32 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 theContext2.current.moveTo(mousePos.current.x, mousePos.current.y)
                 theContext2.current.lineTo(event.clientX, event.clientY)
                 theContext2.current.stroke()
+            }else if(theselector == "Triangle"){
+
+                theContext2.current.clearRect(0,0, width, height)
+                theContext2.current.lineWidth = lineWidth
+                theContext2.current.strokeStyle = brushcolor
+                theContext2.current.fillStyle = theboardColor
+
+
+                const triangleWidth = event.clientX - triangleStartPos.current.x 
+                const triangleHeight = event.clientY - triangleStartPos.current.y
+                console.log(`the tirangle width: ${triangleWidth} height: ${triangleHeight}`)
+
+                theContext2.current.beginPath();
+                
+                //top middle line to bottom right point
+                theContext2.current.moveTo(event.clientX - triangleWidth, (event.clientY))
+                 theContext2.current.strokeStyle = "red"
+                theContext2.current.lineTo(triangleStartPos.current.x + (triangleWidth / 2), triangleStartPos.current.y)
+
+                 theContext2.current.strokeStyle = "blue"
+                theContext2.current.lineTo(event.clientX, event.clientY)
+                theContext2.current.lineTo(event.clientX - triangleWidth, event.clientY)
+                theContext2.current.stroke()
+
+
+
             }
         }
 

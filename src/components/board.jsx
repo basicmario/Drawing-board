@@ -11,6 +11,7 @@ class BrushData{
         this.lineSize = lineSize
         this.BrushColor = BrushColor
         this.dataPoints = dataPoints
+        this.type = "Brush"
     }
 }
 
@@ -273,13 +274,13 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 let startingPoints = pointsHolder.current[0]
                 theContext.current.lineCap = "round"
                 theContext2.current.clearRect(0,0, width, height)
-                theContext.current.moveTo(startingPoints.x, startingPoints.y)
+                theContext.current.moveTo(( startingPoints.x - translateValues.current.x)  , (startingPoints.y - translateValues.current.y))
 
                 for (let x = 1; x < pointsHolder.current.length; x++){
 
-                    const prev = {x: startingPoints.x, y: startingPoints.y}
-                    const midX = (prev.x + pointsHolder.current[x].x) / 2
-                    const midY = (prev.y + pointsHolder.current[x].y) / 2
+                    const prev = {x: ( startingPoints.x - translateValues.current.x)  , y: (startingPoints.y - translateValues.current.y)}
+                    const midX = (prev.x + (pointsHolder.current[x].x- translateValues.current.x) ) / 2
+                    const midY = (prev.y + (pointsHolder.current[x].y - translateValues.current.y)) / 2
 
 
                     theContext.current.quadraticCurveTo(prev.x, prev.y, midX, midY)
@@ -289,9 +290,27 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                     startingPoints = {x : midX, y : midY}
                 }  
 
+                const copyofPointHoler = structuredClone(pointsHolder.current)
+                const replicatosend = []
+
+                let oldZoomValue = zoomValue.current
+
+                for (let obj = 0; obj < copyofPointHoler.length; obj++){
+
+                    let pointx = (copyofPointHoler[obj].x - translateValues.current.x) / (oldZoomValue / 100)
+                    let pointy = (copyofPointHoler[obj].y - translateValues.current.y) / (oldZoomValue / 100)
+
+                    const newPoint = {x : pointx, y : pointy}
+                    replicatosend.push(newPoint)
+
+                }
+
+                const newBrushData = new BrushData(lineWidth, brushcolor, replicatosend)
+                historyHolder.current.push(newBrushData)
+
+
                 theContext.current.stroke()
                 pointsHolder.current.length = 0
-                
             }
 
             if(theselector == "Square"){
@@ -518,6 +537,35 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                             
                             break
                         }
+                        case "Brush": {
+
+                            theContext.current.beginPath()
+                            theContext.current.lineCap = "round"
+                            theContext2.current.clearRect(0,0, width, height)
+
+                            let thenewStartPoint = {x: historyHolder.current[x].dataPoints[0].x, y: historyHolder.current[x].dataPoints[0].y}
+
+                            theContext.current.moveTo(thenewStartPoint.x, thenewStartPoint.y)
+
+                            for (let p = 1; p < historyHolder.current[x].dataPoints.length; p++){
+
+                                const prev = {x: thenewStartPoint.x, y: thenewStartPoint.y}
+                                const midX = (prev.x + historyHolder.current[x].dataPoints[p].x) / 2
+                                const midY = (prev.y + historyHolder.current[x].dataPoints[p].y) / 2
+
+
+                                theContext.current.quadraticCurveTo(prev.x, prev.y, midX, midY)
+                                theContext.current.strokeStyle = brushcolor
+                                theContext.current.lineWidth = lineWidth
+                                
+                                thenewStartPoint = {x : midX, y : midY}
+                            }
+
+                            theContext.current.stroke()
+                            pointsHolder.current.length = 0
+
+                            break
+                        }
                     }   
                 }
             }else if(theselector == "Arrows"){
@@ -634,6 +682,35 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                         theContext.current.lineTo(historyHolder.current[x].thirdlinepoint.x, historyHolder.current[x].thirdlinepoint.y) // from the right most point to the start point
                         theContext.current.stroke()
                         
+                        break
+                    }
+                    case "Brush": {
+
+                        theContext.current.beginPath()
+                        theContext.current.lineCap = "round"
+                        theContext2.current.clearRect(0,0, width, height)
+
+                        let thenewStartPoint = {x: historyHolder.current[x].dataPoints[0].x, y: historyHolder.current[x].dataPoints[0].y}
+
+                        theContext.current.moveTo(thenewStartPoint.x, thenewStartPoint.y)
+
+                        for (let p = 1; p < historyHolder.current[x].dataPoints.length; p++){
+
+                            const prev = {x: thenewStartPoint.x, y: thenewStartPoint.y}
+                            const midX = (prev.x + historyHolder.current[x].dataPoints[p].x) / 2
+                            const midY = (prev.y + historyHolder.current[x].dataPoints[p].y) / 2
+
+
+                            theContext.current.quadraticCurveTo(prev.x, prev.y, midX, midY)
+                            theContext.current.strokeStyle = brushcolor
+                            theContext.current.lineWidth = lineWidth
+                            
+                            thenewStartPoint = {x : midX, y : midY}
+                        }
+
+                        theContext.current.stroke()
+                        pointsHolder.current.length = 0
+
                         break
                     }
                 }

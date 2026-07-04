@@ -172,6 +172,8 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
         theContext2.current.font = `${theTextSize}px Arial`; 
         theContext2.current.fillStyle =  brushcolor;
 
+        console.log("the key: ", event.key)
+
         if(event.code != "Enter") {
             
             theContext2.current.clearRect(0,0, width, height)
@@ -182,6 +184,16 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
             console.log("text:" ,textholder.current)
             theContext2.current.fillText(textholder.current, mousePos.current.x, mousePos.current.y)
         }
+
+
+
+        //left off right here
+        /*
+        if(event.code == "Backspace"){
+            textholder.current = textholder - 
+        }
+
+        */
 
         if(event.code == "Enter"){
             theContext2.current.clearRect(0,0, width, height)
@@ -274,35 +286,51 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 let startingPoints = pointsHolder.current[0]
                 theContext.current.lineCap = "round"
                 theContext2.current.clearRect(0,0, width, height)
-                theContext.current.moveTo(( startingPoints.x - translateValues.current.x)  , (startingPoints.y - translateValues.current.y))
+
+                theContext.current.moveTo(( startingPoints.x - translateValues.current.x) /  (zoomValue.current / 100), (startingPoints.y - translateValues.current.y) / (zoomValue.current / 100))
+                let oldcount = 0;
+                let prev;
+                let midX;
+                let midY;
 
                 for (let x = 1; x < pointsHolder.current.length; x++){
 
-                    const prev = {x: ( startingPoints.x - translateValues.current.x)  , y: (startingPoints.y - translateValues.current.y)}
-                    const midX = (prev.x + (pointsHolder.current[x].x- translateValues.current.x) ) / 2
-                    const midY = (prev.y + (pointsHolder.current[x].y - translateValues.current.y)) / 2
+                    if(oldcount == 0){
+                        prev = {x: ( startingPoints.x - translateValues.current.x)/ (zoomValue.current / 100)  , y: (startingPoints.y - translateValues.current.y) /  (zoomValue.current / 100)}
+                        midX = (prev.x + ((pointsHolder.current[x].x- translateValues.current.x) /  (zoomValue.current / 100))) / 2
+                        midY = (prev.y + ((pointsHolder.current[x].y - translateValues.current.y)/  (zoomValue.current / 100))) / 2
 
-
+                    }else{
+                        prev = {x: startingPoints.x, y: startingPoints.y}
+                        midX = (prev.x + ((pointsHolder.current[x].x- translateValues.current.x) /  (zoomValue.current / 100))) / 2
+                        midY = (prev.y + ((pointsHolder.current[x].y - translateValues.current.y)/  (zoomValue.current / 100))) / 2
+                    }
+                    
                     theContext.current.quadraticCurveTo(prev.x, prev.y, midX, midY)
                     theContext.current.strokeStyle = brushcolor
                     theContext.current.lineWidth = lineWidth
                     
                     startingPoints = {x : midX, y : midY}
+                    oldcount = oldcount + 1
                 }  
 
                 const copyofPointHoler = structuredClone(pointsHolder.current)
                 const replicatosend = []
 
                 let oldZoomValue = zoomValue.current
+                
+                let pointx;
+                let pointy;
 
                 for (let obj = 0; obj < copyofPointHoler.length; obj++){
 
-                    let pointx = (copyofPointHoler[obj].x - translateValues.current.x) / (oldZoomValue / 100)
-                    let pointy = (copyofPointHoler[obj].y - translateValues.current.y) / (oldZoomValue / 100)
-
+                    
+                    pointx = (copyofPointHoler[obj].x - translateValues.current.x) / (oldZoomValue / 100)
+                    pointy = (copyofPointHoler[obj].y - translateValues.current.y) / (oldZoomValue / 100)
+                    
                     const newPoint = {x : pointx, y : pointy}
                     replicatosend.push(newPoint)
-
+                    
                 }
 
                 const newBrushData = new BrushData(lineWidth, brushcolor, replicatosend)
@@ -311,17 +339,11 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
                 theContext.current.stroke()
                 pointsHolder.current.length = 0
+                
             }
 
             if(theselector == "Square"){
 
-                let worldStartX = (squareDownInitialHolder.current.x - translateValues.current.x) / (zoomValue.current / 100)
-
-                let worldStartY = (squareDownInitialHolder.current.y - translateValues.current.y) / (zoomValue.current / 100)
-
-                let worldCurrentX = (event.clientX - translateValues.current.x) / (zoomValue.current / 100)
-
-                let worldCurrentY = (event.clientY - translateValues.current.y) / (zoomValue.current / 100)
 
                 theContext2.current.clearRect(0,0, width, height)
 
@@ -357,9 +379,6 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 panMousePos.current = {x: null, y: null}
 
             }else if(theselector == "Arrows"){
-
-                
-
                 theContext2.current.clearRect(0,0, width, height)
 
                 theContext.current.beginPath()
@@ -696,7 +715,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
                         for (let p = 1; p < historyHolder.current[x].dataPoints.length; p++){
 
-                            const prev = {x: thenewStartPoint.x, y: thenewStartPoint.y}
+                            const prev = {x: thenewStartPoint.x , y: thenewStartPoint.y}
                             const midX = (prev.x + historyHolder.current[x].dataPoints[p].x) / 2
                             const midY = (prev.y + historyHolder.current[x].dataPoints[p].y) / 2
 

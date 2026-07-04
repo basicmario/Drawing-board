@@ -3,7 +3,7 @@
 import React from 'react'
 import './SidePanel.css'
 
-function SidePanel({boardColorChanger, brushColorChanger, lineWidthChanger, theTextSize}) {
+function SidePanel({boardColorChanger, brushColorChanger, lineWidthChanger, theTextSize, thestrokeSize}) {
 
   const windowSize = {width : window.innerWidth, height: window.innerHeight}
   const panelheight = 350
@@ -40,7 +40,7 @@ function SidePanel({boardColorChanger, brushColorChanger, lineWidthChanger, theT
 
         <p>Stroke Width</p>
         <div className="strokewidth">
-          <input  type='range' onChange={(event)=>lineWidthChanger(event.target.value)} /> <p>{event.target.value}</p>
+          <input  type='range' onChange={(event)=>lineWidthChanger(event.target.value)} value={thestrokeSize}/> <p>{event.target.value}</p>
         </div>
 
 

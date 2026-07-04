@@ -120,22 +120,16 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
         theContext2.current =ctx2
 
         canvas.style.backgroundColor = theboardColor
-        //canvas2.style.backgroundColor = theboardColor
 
-        //theContext.current.fillStyle = theboardColor;
-        //theContext.current.fillRect(0, 0, (width), (height));
-
-        //theContext2.current.fillStyle = theboardColor;
-        //theContext2.current.fillRect(0, 0, (width), (height));
 
     },[])
 
     useEffect(()=> {
         theContext.current.fillStyle = theboardColor;
-        //theContext.current.fillRect(0, 0, (width), (height));
+       
 
         theContext2.current.fillStyle = theboardColor;
-        //theContext2.current.fillRect(0, 0, (width), (height));
+       
 
 
         for (let x = 0; x < historyHolder.current.length; x++) {
@@ -214,6 +208,14 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
             panSelected.current = true
         }else{
             panSelected.current = false
+        }
+
+
+        //changing the mouse icon based on what tool is elected
+        if(theselector == "Brush"){
+            document.body.style.cursor = 'url("pencil.png") 0 16, auto'
+        }else{
+            document.body.style.cursor = 'auto'
         }
 
         const MouseDown = (event) => {
@@ -322,7 +324,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                     
                 }
 
-                const newBrushData = new BrushData(lineWidth, brushcolor, replicatosend)
+                const newBrushData = new BrushData((lineWidth / (zoomValue.current / 100)), brushcolor, replicatosend)
                 historyHolder.current.push(newBrushData)
 
 
@@ -553,10 +555,12 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                                 const midX = (prev.x + historyHolder.current[x].dataPoints[p].x) / 2
                                 const midY = (prev.y + historyHolder.current[x].dataPoints[p].y) / 2
 
-
+                                
+                                theContext.current.lineWidth = historyHolder.current[x].lineSize 
+                                theContext.current.strokeStyle = historyHolder.current[x].BrushColor
                                 theContext.current.quadraticCurveTo(prev.x, prev.y, midX, midY)
-                                theContext.current.strokeStyle = brushcolor
-                                theContext.current.lineWidth = lineWidth 
+                                
+                           
                                 
                                 thenewStartPoint = {x : midX, y : midY}
                             }
@@ -703,8 +707,8 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
 
                             theContext.current.quadraticCurveTo(prev.x, prev.y, midX, midY)
-                            theContext.current.strokeStyle = brushcolor
-                            theContext.current.lineWidth = (lineWidth / (zoomValue.current / 100)) 
+                            theContext.current.strokeStyle = historyHolder.current[x].BrushColor
+                            theContext.current.lineWidth = historyHolder.current[x].lineSize
                             
                             thenewStartPoint = {x : midX, y : midY}
                         }

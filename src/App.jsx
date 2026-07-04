@@ -92,7 +92,7 @@ function App() {
 
       function detectMSbutton(event){
 
-        event.preventDefault()
+        
         
         if(event.button == 2){
           setSelectedItem("Pan")
@@ -100,6 +100,8 @@ function App() {
 
 
       }
+
+      ///bug when i increase the line width and zoom out it changes the line width for all the drawings
 
 
       document.addEventListener('keydown', detectKey)
@@ -124,7 +126,7 @@ function App() {
         theTextSize={textSize}
         updateZoomValue={setZoomValue}/>
         <Brush context={theContext} brushcolor={brushColor}/>
-        <SidePanel boardColorChanger = {setBoardColor} brushColorChanger={setBrushColor} lineWidthChanger={setStrokeSize} theTextSize={settextSize}/>
+        <SidePanel boardColorChanger = {setBoardColor} brushColorChanger={setBrushColor} thestrokeSize={strokeSize}lineWidthChanger={setStrokeSize} theTextSize={settextSize}/>
         <TopPanel itemSelector={setSelectedItem} keyboardItemChanger={selectedItem}/>
         <BottomStats theZoomValue= {zoomValue}/>
       </div>

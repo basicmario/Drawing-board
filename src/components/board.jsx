@@ -174,8 +174,23 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
         console.log("the key: ", event.key)
 
+        //left off right here
+        
+        if(event.code == "Backspace"){
+            const lengthofWord = textholder.current.length
+            console.log("string length: ", lengthofWord)
+            console.log("word before:", textholder.current)
+
+            textholder.current = textholder.current.slice(0, (lengthofWord - 1))
+            console.log("word after:", textholder.current)
+            theContext2.current.clearRect(0,0, width, height)
+            theContext2.current.fillText(textholder.current, mousePos.current.x, mousePos.current.y)
+        }
+
         if(event.code != "Enter") {
-            
+
+            if(event.code == "Backspace") return
+                
             theContext2.current.clearRect(0,0, width, height)
 
             setKeyInputsHolder(prev => prev + (event.key))
@@ -185,15 +200,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
             theContext2.current.fillText(textholder.current, mousePos.current.x, mousePos.current.y)
         }
 
-
-
-        //left off right here
-        /*
-        if(event.code == "Backspace"){
-            textholder.current = textholder - 
-        }
-
-        */
+        
 
         if(event.code == "Enter"){
             theContext2.current.clearRect(0,0, width, height)

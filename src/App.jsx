@@ -55,6 +55,12 @@ function App() {
 
       function detectKey(event){
 
+
+        if (event.target.tagName == "INPUT"){
+          
+          return
+        } 
+
         switch (event.key){
           
           case '1':

@@ -60,6 +60,24 @@
 }
 
 
+.strokewidth {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.strokewidth p {
+    font-size: 15px;
+    font-family:Arial, Helvetica, sans-serif;
+    padding: 5px;
+    border: 1px solid rgb(147, 147, 147);
+    border-radius: 15px;
+    background-color: #ffffff;
+    color: black;
+}
+
+
 .strokewidth input {
     border: 0px solid grey;
     border-radius: 15px;

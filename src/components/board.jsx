@@ -119,26 +119,28 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
         theContext.current = ctx
         theContext2.current =ctx2
 
-        theContext.current.fillStyle = theboardColor;
-        theContext.current.fillRect(0, 0, (width), (height));
+        canvas.style.backgroundColor = theboardColor
+        //canvas2.style.backgroundColor = theboardColor
 
-        theContext2.current.fillStyle = theboardColor;
-        theContext2.current.fillRect(0, 0, (width), (height));
+        //theContext.current.fillStyle = theboardColor;
+        //theContext.current.fillRect(0, 0, (width), (height));
+
+        //theContext2.current.fillStyle = theboardColor;
+        //theContext2.current.fillRect(0, 0, (width), (height));
 
     },[])
 
     useEffect(()=> {
         theContext.current.fillStyle = theboardColor;
-        theContext.current.fillRect(0, 0, (width), (height));
+        //theContext.current.fillRect(0, 0, (width), (height));
 
         theContext2.current.fillStyle = theboardColor;
-        theContext2.current.fillRect(0, 0, (width), (height));
+        //theContext2.current.fillRect(0, 0, (width), (height));
 
 
         for (let x = 0; x < historyHolder.current.length; x++) {
             switch (historyHolder.current[x]?.type) {
                 case "square":
-                    console.log("new square")
                     theContext.current.fillStyle = historyHolder.current[x].BrushColor;
                     theContext.current.fillRect(
                         historyHolder.current[x].startingPoint.x,
@@ -149,16 +151,14 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                     break;
 
                 case "arrow":
-                    console.log("drawing the arrow")
                     theContext.current.beginPath()
                     theContext.current.strokeStyle = historyHolder.current[x].BrushColor
                     theContext.current.lineWidth = historyHolder.current[x].lineSize
                     theContext.current.moveTo(historyHolder.current[x].startingPoint.x, historyHolder.current[x].startingPoint.y)
 
-                    console.log("the point in the pan: ", historyHolder.current[x].startingPoint.x, historyHolder.current[x].startingPoint.y)
                     theContext.current.lineTo(historyHolder.current[x].endPoint.x, historyHolder.current[x].endPoint.y)
                     theContext.current.stroke()
-                    console.log("arrow done drawn")
+                    
                     break;
             }   
         }
@@ -171,18 +171,10 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
     const keyDown = (event) => {
         theContext2.current.font = `${theTextSize}px Arial`; 
         theContext2.current.fillStyle =  brushcolor;
-
-        console.log("the key: ", event.key)
-
-        //left off right here
         
         if(event.code == "Backspace"){
             const lengthofWord = textholder.current.length
-            console.log("string length: ", lengthofWord)
-            console.log("word before:", textholder.current)
-
             textholder.current = textholder.current.slice(0, (lengthofWord - 1))
-            console.log("word after:", textholder.current)
             theContext2.current.clearRect(0,0, width, height)
             theContext2.current.fillText(textholder.current, mousePos.current.x, mousePos.current.y)
         }
@@ -196,7 +188,6 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
             setKeyInputsHolder(prev => prev + (event.key))
             
             textholder.current = textholder.current + event.key
-            console.log("text:" ,textholder.current)
             theContext2.current.fillText(textholder.current, mousePos.current.x, mousePos.current.y)
         }
 
@@ -225,9 +216,6 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
             panSelected.current = false
         }
 
-
-
-
         const MouseDown = (event) => {
             draw.current = true
 
@@ -237,16 +225,13 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 theContext2.current.beginPath()
                 startingPosition.current = {startingX : event.clientX, startingY : event.clientY}
                 pointsHolder.current.push({x: event.clientX, y: event.clientY})
-                //console.log("running 1")
             }else if(theselector == "Square"){
                 
                 squareDownInitialHolder.current.x = event.clientX //+ translateValues.current.x// ← subtract offset
                 squareDownInitialHolder.current.y = event.clientY //+ translateValues.current.y
 
             }else if(theselector == "Text"){
-                
-                console.log("alreadyInText", alreadyInText.current)
-
+        
                 if(alreadyInText.current == false){
                     mousePos.current = {x: event.clientX, y: event.clientY}
                     document.addEventListener("keydown", keyDown)
@@ -263,7 +248,6 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
                     document.removeEventListener("keydown", keyDown)
 
-                    console.log("texted rendered to bottom")
                 }
             }else if(theselector == "Pan"){
                 
@@ -273,12 +257,9 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
             }else if(theselector == "Arrows"){
 
-                console.log("Arrow selected")
 
                 mousePos.current = {x: event.clientX, y: event.clientY}
             }else if(theselector == "Triangle"){
-
-                console.log("triangle running now")
                 triangleStartPos.current.x = event.clientX
                 triangleStartPos.current.y = event.clientY
             }
@@ -313,9 +294,10 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                         midY = (prev.y + ((pointsHolder.current[x].y - translateValues.current.y)/  (zoomValue.current / 100))) / 2
                     }
                     
-                    theContext.current.quadraticCurveTo(prev.x, prev.y, midX, midY)
                     theContext.current.strokeStyle = brushcolor
-                    theContext.current.lineWidth = lineWidth
+                    theContext.current.quadraticCurveTo(prev.x, prev.y, midX, midY)
+                    theContext.current.lineWidth = (lineWidth / (zoomValue.current / 100)) 
+                    theContext.current.stroke()
                     
                     startingPoints = {x : midX, y : midY}
                     oldcount = oldcount + 1
@@ -344,14 +326,12 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 historyHolder.current.push(newBrushData)
 
 
-                theContext.current.stroke()
+                
                 pointsHolder.current.length = 0
                 
             }
 
             if(theselector == "Square"){
-
-
                 theContext2.current.clearRect(0,0, width, height)
 
                 theContext.current.fillStyle =  brushcolor;
@@ -360,8 +340,6 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                                             (event.clientX - squareDownInitialHolder.current.x) / (zoomValue.current / 100), 
                                             (event.clientY - squareDownInitialHolder.current.y) / (zoomValue.current / 100))
 
-
-                
                 const newSquare = new SquareData(
                     lineWidth, 
                     brushcolor, 
@@ -374,15 +352,11 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
                 historyHolder.current.push(newSquare)
 
-                console.log("size of the history: ", historyHolder.current.length)
-
 
             }else if(theselector == "Pan"){
 
                 document.body.style.cursor = ""
                 panSelected.current = false
-
-               
                 panMousePos.current = {x: null, y: null}
 
             }else if(theselector == "Arrows"){
@@ -410,7 +384,6 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                     x: (event.clientX - translateValues.current.x) / (zoomValue.current / 100), 
                     y: (event.clientY - translateValues.current.y) / (zoomValue.current / 100)}
                 
-                console.log("beginning point: ", beginningPoint.x , beginningPoint.y)
                 const newArrow = new ArrowData(lineWidth, brushcolor, endpoint, beginningPoint)
 
                 historyHolder.current.push(newArrow)
@@ -486,7 +459,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
                 theContext2.current.quadraticCurveTo(prev.x, prev.y, midX, midY)
                 theContext2.current.strokeStyle = brushcolor
-                theContext2.current.lineWidth = lineWidth
+                theContext2.current.lineWidth = lineWidth 
                 theContext2.current.stroke()
                 startingPosition.current = {startingX : midX, startingY : midY}
                 
@@ -510,8 +483,8 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 panMousePos.current.y = event.clientY
 
                 theContext.current.clearRect(0, 0, width, height)
-                theContext.current.fillStyle = theboardColor
-                theContext.current.fillRect(0, 0, width, height)
+                //theContext.current.fillStyle = theboardColor
+                //theContext.current.fillRect(0, 0, width, height)
 
                 theContext.current.setTransform(1, 0, 0, 1, 0, 0)
 
@@ -582,7 +555,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
                                 theContext.current.quadraticCurveTo(prev.x, prev.y, midX, midY)
                                 theContext.current.strokeStyle = brushcolor
-                                theContext.current.lineWidth = lineWidth
+                                theContext.current.lineWidth = lineWidth 
                                 
                                 thenewStartPoint = {x : midX, y : midY}
                             }
@@ -614,7 +587,6 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
                 const triangleWidth = event.clientX - triangleStartPos.current.x 
                 const triangleHeight = event.clientY - triangleStartPos.current.y
-                console.log(`the tirangle width: ${triangleWidth} height: ${triangleHeight}`)
 
                 theContext2.current.beginPath();
                 
@@ -633,7 +605,6 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
         function zooming(event){
            
-
             mousePosforZooming.current.x = event.clientX
             mousePosforZooming.current.y = event.clientY
 
@@ -655,9 +626,11 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
             let newTranslateY = event.clientY - (worldY * (zoomValue.current / 100))
 
             theContext.current.clearRect(0, 0, width, height)
-            theContext.current.fillStyle = theboardColor
-            theContext.current.fillRect(0, 0, width, height)
+            //theContext.current.fillStyle = theboardColor
+            //theContext.current.fillRect(0, 0, width, height)
+            
             theContext.current.setTransform(1, 0, 0, 1, 0, 0)
+            theContext.current.clearRect(0, 0, width, height)
 
 
             translateValues.current.x = newTranslateX
@@ -715,6 +688,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                         theContext.current.beginPath()
                         theContext.current.lineCap = "round"
                         theContext2.current.clearRect(0,0, width, height)
+                        theContext2.current.clearRect(0,0, width, height)
 
                         let thenewStartPoint = {x: historyHolder.current[x].dataPoints[0].x, y: historyHolder.current[x].dataPoints[0].y}
 
@@ -729,7 +703,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
                             theContext.current.quadraticCurveTo(prev.x, prev.y, midX, midY)
                             theContext.current.strokeStyle = brushcolor
-                            theContext.current.lineWidth = lineWidth
+                            theContext.current.lineWidth = (lineWidth / (zoomValue.current / 100)) 
                             
                             thenewStartPoint = {x : midX, y : midY}
                         }
@@ -767,7 +741,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
         <>
 
            <div className="convaswrapper">
-             <canvas className='secondBoard' width={width} height={height} ref={theref2}></canvas>
+            <canvas className='secondBoard' width={width} height={height} ref={theref2}></canvas>
             <canvas className="Board" width={width} height={height} ref={theref} >   </canvas>
            </div>
         </>

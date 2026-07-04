@@ -40,8 +40,9 @@ function SidePanel({boardColorChanger, brushColorChanger, lineWidthChanger, theT
 
         <p>Stroke Width</p>
         <div className="strokewidth">
-          <input  type='number' onChange={(event)=>lineWidthChanger(event.target.value)} />
+          <input  type='range' onChange={(event)=>lineWidthChanger(event.target.value)} /> <p>{event.target.value}</p>
         </div>
+
 
         <p>Text Size</p>
         <div className="strokewidth">

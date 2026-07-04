@@ -487,6 +487,7 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
                 //theContext.current.fillRect(0, 0, width, height)
 
                 theContext.current.setTransform(1, 0, 0, 1, 0, 0)
+                theContext.current.clearRect(0, 0, width, height)
 
                 theContext.current.translate(translateValues.current.x, translateValues.current.y)
                 theContext.current.scale(zoomValue.current / 100, zoomValue.current / 100)

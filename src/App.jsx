@@ -51,8 +51,6 @@ function App() {
 
 
     useEffect(()=>{
-
-
       function detectKey(event){
 
 
@@ -92,9 +90,27 @@ function App() {
       }
 
 
-      document.addEventListener('keydown', detectKey)
+      function detectMSbutton(event){
 
-      return ()=> document.removeEventListener('keydown', detectKey)
+        event.preventDefault()
+        
+        if(event.button == 2){
+          setSelectedItem("Pan")
+        }
+
+
+      }
+
+
+      document.addEventListener('keydown', detectKey)
+      document.addEventListener('mousedown', detectMSbutton)
+      window.addEventListener('contextmenu', (event)=> event.preventDefault())
+
+      return ()=>{
+
+        document.removeEventListener('keydown', detectKey)
+        document.removeEventListener('mousedown', detectMSbutton)
+      } 
 
     },[])
 

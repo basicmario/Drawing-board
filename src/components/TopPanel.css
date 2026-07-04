@@ -28,9 +28,20 @@
     background-color: transparent;
     text-align: center;
     display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
+    position: relative;
+}
 
+.TopPanel button span{
+
+    font-size: 10px;
+    
+    /* ADDED: Pulls the span out of the text flow and forces it to the corner */
+    position: absolute;
+    bottom: 0px;  /* Spacing from the bottom edge */
+    right: 10px;   /* Spacing from the right edge */
 }
 
 .TopPanel button:hover {

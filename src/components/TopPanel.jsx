@@ -23,7 +23,7 @@ import { LuSpline } from "react-icons/lu";
 
 
 
-function TopPanel({itemSelector}) {
+function TopPanel({itemSelector, keyboardItemChanger}) {
 
     const windowSize = {width : window.innerWidth, height: window.innerHeight}
     const panelWidth = 500
@@ -46,6 +46,7 @@ function TopPanel({itemSelector}) {
       let thebutton = document.getElementById(theOption)
 
       thebutton.style.backgroundColor = "#bfbfbf"
+      
 
       let otherbuttons = document.getElementsByClassName("topPanelButton")
 
@@ -60,6 +61,22 @@ function TopPanel({itemSelector}) {
     },[theOption])
 
 
+    useEffect(()=>{
+      let thebutton2 = document.getElementById(keyboardItemChanger)
+
+      thebutton2.style.backgroundColor = "#bfbfbf"
+
+      let otherbuttons = document.getElementsByClassName("topPanelButton")
+
+      for( let x = 0; x < otherbuttons.length; x++){
+        
+        if(otherbuttons[x].id != thebutton2.id){
+          otherbuttons[x].style.backgroundColor = "#a6a6a6"
+        }
+      }
+    },[keyboardItemChanger])
+
+
 
    
     
@@ -68,13 +85,13 @@ function TopPanel({itemSelector}) {
   return (
     <div className="TopPanel" style={{top : '5' , left : ((windowSize.width / 2) - (panelWidth/ 2))}}>
 
-        <button className= "topPanelButton" id="Selection" onClick={()=>onButtonClick("Selection")}> <LuMousePointer2 /></button>
-        <button className= "topPanelButton" id="Pan" onClick={()=>onButtonClick("Pan")}> <PiHandPalmBold /> </button>
-        <button className= "topPanelButton" id="Square" onClick={()=>onButtonClick("Square")}> <FaRegSquareFull /> </button>
-        <button className= "topPanelButton" id="Triangle" onClick={()=>onButtonClick("Triangle")} style={{fontSize : "22px"}}> <FiTriangle /> </button>
-        <button className= "topPanelButton" id="Arrows" onClick={()=>onButtonClick("Arrows")}  style={{fontSize : "22px"}}> <LuSpline /> </button>
-        <button className= "topPanelButton" id="Brush" onClick={()=>onButtonClick("Brush")}> <LuPaintbrush /> </button>
-        <button className= "topPanelButton" id="Text" onClick={()=>onButtonClick("Text")}> <LuTypeOutline /> </button>
+        <button className= "topPanelButton" id="Selection" onClick={()=>onButtonClick("Selection")}> <LuMousePointer2 /> <span>1</span></button>
+        <button className= "topPanelButton" id="Pan" onClick={()=>onButtonClick("Pan")}> <PiHandPalmBold /> <span>2</span></button>
+        <button className= "topPanelButton" id="Square" onClick={()=>onButtonClick("Square")}> <FaRegSquareFull /> <span>3</span></button>
+        <button className= "topPanelButton" id="Triangle" onClick={()=>onButtonClick("Triangle")} style={{fontSize : "22px"}}> <FiTriangle /> <span>4</span></button>
+        <button className= "topPanelButton" id="Arrows" onClick={()=>onButtonClick("Arrows")}  style={{fontSize : "22px"}}> <LuSpline /> <span>5</span></button>
+        <button className= "topPanelButton" id="Brush" onClick={()=>onButtonClick("Brush")}> <LuPaintbrush /> <span>6</span></button>
+        <button className= "topPanelButton" id="Text" onClick={()=>onButtonClick("Text")}> <LuTypeOutline /> <span>7</span></button>
         
 
     </div>

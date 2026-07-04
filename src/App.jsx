@@ -49,6 +49,50 @@ function App() {
     },[selectedItem])
 
 
+
+    useEffect(()=>{
+
+
+      function detectKey(event){
+
+        switch (event.key){
+          
+          case '1':
+
+            setSelectedItem("Selection")
+            break
+          case "2":
+            console.log("running")
+            setSelectedItem("Pan")
+            break
+          case '3':
+            setSelectedItem("Square")
+            break
+          case '4':
+            setSelectedItem("Triangle")
+            break
+          case '5':
+            setSelectedItem("Arrows")
+             break
+          case '6':
+            setSelectedItem("Brush")
+            break
+          case '7':
+            setSelectedItem("Text")
+            break
+          default:
+            setSelectedItem("Brush")
+        }
+      }
+
+
+      document.addEventListener('keydown', detectKey)
+
+      return ()=> document.removeEventListener('keydown', detectKey)
+
+    },[])
+
+
   return (
     <>
       <div className="content-wrapper">
@@ -59,7 +103,7 @@ function App() {
         updateZoomValue={setZoomValue}/>
         <Brush context={theContext} brushcolor={brushColor}/>
         <SidePanel boardColorChanger = {setBoardColor} brushColorChanger={setBrushColor} lineWidthChanger={setStrokeSize} theTextSize={settextSize}/>
-        <TopPanel itemSelector={setSelectedItem}/>
+        <TopPanel itemSelector={setSelectedItem} keyboardItemChanger={selectedItem}/>
         <BottomStats theZoomValue= {zoomValue}/>
       </div>
     </>

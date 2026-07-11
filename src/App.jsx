@@ -7,6 +7,7 @@ import './App.css'
 import { useEffect, useRef, useState } from 'react'
 import TopPanel from './components/TopPanel'
 import BottomStats from './components/BottomStats'
+import RightPanel from './components/RightPanel'
 
 
 
@@ -129,6 +130,7 @@ function App() {
         <SidePanel boardColorChanger = {setBoardColor} brushColorChanger={setBrushColor} thestrokeSize={strokeSize}lineWidthChanger={setStrokeSize} theTextSize={settextSize}/>
         <TopPanel itemSelector={setSelectedItem} keyboardItemChanger={selectedItem}/>
         <BottomStats theZoomValue= {zoomValue}/>
+        <RightPanel />
       </div>
     </>
   )

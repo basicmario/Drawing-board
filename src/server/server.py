@@ -55,11 +55,11 @@ async def handler(websocket):
             
             # user sends us a message
             message = await websocket.recv()
-            print("message from client: ", message, websocket.id)
+            #print("message from client: ", message, websocket.id)
 
             # getting the name
             newname = message.split('"') #name is the 3rd element
-            print("the split: ", newname)
+            #print("the split: ", newname)
 
             xvalue = newname[8].replace(":", "")
             newx = xvalue.replace(",", '')
@@ -85,13 +85,14 @@ async def handler(websocket):
                 clientName.append(template)
                 storagewithoutsocket.append(nosocktemp)
                 
-                print("client added to the list")
+                print("[ADDED]", websocket.id)
 
             # adding message if its not in the table already and updating its values
             for d in clientName:
                 if(d["socket"] == websocket):
                     d["name"] = template["name"]
                     d["mousepos"] = template["mousepos"]
+                    #print("working 1")
 
 
                     
@@ -99,9 +100,7 @@ async def handler(websocket):
                 if(x["ID"] == str(websocket.id)):
                     x["name"] = template["name"]
                     x["mousepos"] = template["mousepos"]
-
-                
-            
+                    #print("working 2")
 
             # sending the message
             for clients in clientList:
@@ -119,11 +118,18 @@ async def handler(websocket):
             for x in clientName:
                 if(x["socket"] == websocket):
                     clientName.remove(x)
+                    print("client removed from list: ", websocket.id)
 
+            
+
+            for x in storagewithoutsocket:
+                if(x["ID"] == str(websocket.id)):
+                    storagewithoutsocket.remove(x)
+                    print("[REMOVE]", websocket.id)
 
             count -= 1
             print("num of clients (removed): ", count)
-            print("client removed from list: ", websocket)
+            
             break
         
 

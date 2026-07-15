@@ -23,9 +23,18 @@ function App() {
     const [canvaSize, setCanvasSize] = useState({width: window.innerWidth, height: window.innerHeight})
     const [zoomValue, setzoomValue] = useState(100)
 
-    //console.log(`the color: ${boardColor}`)
-    //console.log(`the stroke size: ${strokeSize}`)
-    
+
+    const [arrayofclients, setarrayofclients] = useState([])
+
+
+    function getarrayofclients(array){
+        setarrayofclients(array)
+    }
+
+    useEffect(()=>{
+      console.log("clients from APP.JSX", arrayofclients)
+    },[arrayofclients])
+
 
     //creating the board and the context
     //handling board resizes
@@ -125,12 +134,13 @@ function App() {
         lineWidth={strokeSize} 
         theselector={selectedItem} 
         theTextSize={textSize}
-        updateZoomValue={setZoomValue}/>
+        updateZoomValue={setZoomValue}
+        listofclients={arrayofclients}/>
         <Brush context={theContext} brushcolor={brushColor}/>
         <SidePanel boardColorChanger = {setBoardColor} brushColorChanger={setBrushColor} thestrokeSize={strokeSize}lineWidthChanger={setStrokeSize} theTextSize={settextSize}/>
         <TopPanel itemSelector={setSelectedItem} keyboardItemChanger={selectedItem}/>
         <BottomStats theZoomValue= {zoomValue}/>
-        <RightPanel />
+        <RightPanel getclients={getarrayofclients} />
       </div>
     </>
   )

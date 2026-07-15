@@ -68,7 +68,7 @@ class TextData{
 
 
 
-function Board({width, height, brushcolor, lineWidth, theselector, theboardColor, theTextSize, updateZoomValue}) {
+function Board({width, height, brushcolor, lineWidth, theselector, theboardColor, theTextSize, updateZoomValue, listofclients}) {
 
 
     //storing variables
@@ -101,6 +101,9 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
     const previousmousecoordinates = useRef({x: null, y: null})
 
     const triangleStartPos = useRef({x: null, y: null})
+
+    const [updatearray, setupdatearray] = useState([])
+    const newarrayholer = useRef(null)
     
 
 
@@ -158,6 +161,37 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
         }
         //to do: when the window is resized it deletes all the text that was there
     },[theboardColor, width, height])
+
+
+
+
+    // get the list of clients from the server and put them into a circle
+
+    useEffect(()=>{
+        
+        newarrayholer.current = listofclients.map((value, index)=>(
+            <circle 
+                key={index} 
+                cx={value?.mousepos.x } 
+                cy={value?.mousepos.y } 
+                r="15" 
+                stroke="#27B7F5" 
+                strokeWidth="2" 
+                fill="#2776F5" 
+            />
+        ))
+
+        function renderclients(clients){
+            setupdatearray(clients)
+        }
+
+        renderclients(newarrayholer.current)
+        
+
+    },[listofclients])
+
+    
+    
     
 
 
@@ -745,7 +779,13 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
         <>
 
-           <div className="convaswrapper">
+           <div className="convaswrapper" style={{ 
+                width: `${width || 800}px`,  // Fallback defaults to prevent zero-collapsing
+                height: `${height || 600}px` 
+            }}>
+            <svg height={height} width={width} className='avatars'>
+                {updatearray}
+            </svg>
             <canvas className='secondBoard' width={width} height={height} ref={theref2}></canvas>
             <canvas className="Board" width={width} height={height} ref={theref} >   </canvas>
            </div>

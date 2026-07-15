@@ -5,7 +5,7 @@ import { useState, useRef} from "react"
 import './RightPanel.css'
 
 
-function RightPanel(){
+function RightPanel({getclients}){
 
     const [show, setShow] = useState(false)
     const [username, setusername] = useState("")
@@ -33,11 +33,11 @@ function RightPanel(){
         setusername(holder.value)
         console.log("username: ", holder.value)
 
-
         const data = {name: holder.value}
         websocket.current.send(JSON.stringify({"name": holder.value , "mousepos": lastmousePos.current}))
-        
     }
+
+    
 
     function sendMouseMove(event){
  
@@ -95,7 +95,7 @@ function RightPanel(){
             const clientName = returndata.name  
 
             setClientsConnected(JSON.parse(event.data))
-        
+            getclients(JSON.parse(event.data))
         }
 
         websocket.current.addEventListener("message", messageserver)
@@ -145,6 +145,8 @@ function RightPanel(){
                 }
                 
             </div>
+            
+            
 
             <button onClick={()=>onPush()}> Share</button>
 

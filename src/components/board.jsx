@@ -104,6 +104,8 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
     const [updatearray, setupdatearray] = useState([])
     const newarrayholer = useRef(null)
+
+    const serverclients = useRef([null])
     
 
 
@@ -164,22 +166,125 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
 
 
+    // store the clients that are connected to the server, if new positions get sent then we don't change what their stroke/fill colors are
+    useEffect(()=>{
+
+        console.log("list of clients, ", listofclients)
+
+        for (let x = 0; x < listofclients.length; x++){
+
+            let isEqual = false
+            for (let i =0; i < serverclients.current.length; i++){
+
+                if(serverclients.current[i].ID == listofclients[x].ID){
+                    isEqual = true
+                    continue
+                }
+
+            }
+
+            if(isEqual == false){
+                let coloroptions = {
+                    red : {fill: "#eb4034", stroke : "#ff6459"},
+                    blue : {fill: "#2776F5", stroke : "#27B7F5"},
+                    yellow : {fill: "#eaff04", stroke : "#ecff59"},
+                    green : {fill: "#11ff50", stroke : "#5cff82"},
+                    purple : {fill: "#7d04ff", stroke : "#aa7cff"},
+                    orange : {fill: "#ffa200", stroke : "#ffca60"}
+
+                }
+
+                const randomnum = Math.floor(Math.random() * Object.keys(coloroptions).length)
+
+                const options = Object.keys(coloroptions)
+
+                const pickedColor = options[randomnum]
+
+                const colorData = coloroptions[pickedColor]
+
+                const obj= {
+                    ID: listofclients[x].ID, 
+                    nameofclient : listofclients[x].name, 
+                    stroke: colorData.stroke, 
+                    fill: colorData.fill,
+                    mousepos : listofclients[x].mousepos
+                }
+
+                serverclients.current.push(obj)
+                console.log("[ADDED:] ", obj)
+            }
+        }
+        
+        console.log("[UPDATE]: ", serverclients.current)
+
+        //check to see if serverclients includes an element that is no longer attached to the server and removes it
+        for (let x = 0; x < serverclients.current.length; x++){
+
+            let isThere = false
+
+            for (let i = 0; i < listofclients.length; i++){
+
+                if (listofclients[i]?.ID == serverclients.current[x].ID){
+                    isThere = true
+                    continue
+                }
+            }
+
+            if(isThere == true){
+                console.log(serverclients.current[x], "is included")
+            }else{
+                console.log(serverclients.current[x], "NOT included")
+                serverclients.current.splice(x,1)
+            }
+        }
+
+        //updating the positoon of obj
+        for (let i = 0; i < serverclients.current.length; i++){
+            for(let x = 0; x < listofclients.length; x++){
+
+                if(serverclients.current[i].ID == listofclients[x].ID){
+                    serverclients.current[i].mousepos = listofclients[x].mousepos
+                }
+            }
+        }
+
+
+        
+    },[listofclients])
+
+
 
     // get the list of clients from the server and put them into a circle
 
     useEffect(()=>{
+
+        let coloroptions = {
+            red : {fill: "#eb4034", stroke : "#ff6459"},
+            blue : {fill: "#2776F5", stroke : "#27B7F5"},
+            yellow : {fill: "#eaff04", stroke : "#ecff59"},
+            green : {fill: "#11ff50", stroke : "#5cff82"},
+            purple : {fill: "#7d04ff", stroke : "#aa7cff"},
+            orange : {fill: "#ffa200", stroke : "#ffca60"}
+
+        }
         
-        newarrayholer.current = listofclients.map((value, index)=>(
-            <circle 
+        newarrayholer.current = serverclients.current.map((value, index)=>{
+
+            console.log("the value: ", value)
+
+            return (
+                <circle 
                 key={index} 
-                cx={value?.mousepos.x } 
-                cy={value?.mousepos.y } 
+                cx={value?.mousepos?.x } 
+                cy={value?.mousepos?.y } 
                 r="15" 
-                stroke="#27B7F5" 
+                stroke={value.stroke} 
                 strokeWidth="2" 
-                fill="#2776F5" 
+                fill={value.fill} 
             />
-        ))
+            )
+            
+        })
 
         function renderclients(clients){
             setupdatearray(clients)

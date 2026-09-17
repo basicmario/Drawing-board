@@ -274,6 +274,10 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
             return (
                 <circle 
+                className='clientdot'
+                onMouseEnter={()=>{
+                    console.log("you entered the mouse")
+                }}
                 key={index} 
                 cx={value?.mousepos?.x } 
                 cy={value?.mousepos?.y } 
@@ -297,8 +301,12 @@ function Board({width, height, brushcolor, lineWidth, theselector, theboardColor
 
     
     
+    //
+
     
 
+    
+    
 
 
     const keyDown = (event) => {

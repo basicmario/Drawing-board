@@ -1,6 +1,6 @@
 
 import Board from './components/board'
-import Brush from './components/brush'
+import Brush from './components/Brush'
 import SidePanel from './components/SidePanel'
 import './App.css'
 
